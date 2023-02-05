@@ -8,6 +8,7 @@ from dash_bootstrap_components._components.Container import Container
 from functions import *
 from objects import *
 from app_pages import *
+from git import Repo
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.VAPOR], suppress_callback_exceptions=True, meta_tags=[{'name': 'viewport',
                              'content': 'width=device-width, initial-scale=1.0, maximum-scale=1.2, minimum-scale=0.5,'}]
@@ -56,7 +57,7 @@ app.layout = html.Div(id="main" , children=[
 
 )
 
-def reset_fiyat_table(nclicks, tab):
+def reset_paket_table(nclicks, tab):
 
     if nclicks > 0 :
         return df_packages_copy[tab].to_dict('records')
@@ -108,6 +109,8 @@ def update_fiyat(nclicks, data):
                     ws.cell(row=current_row, column=current_col).value = float(column[r])
                 current_row += 1
         book.save('Sources/FiyatListesi.xlsx')
+        git_push()
+
 
         return html.Div( "Fiyat Bilgileri Güncellendi !"), True, dash.no_update,
 
@@ -146,6 +149,7 @@ def update_paket(nclicks, tab, data):
                     ws.cell(row=current_row, column=current_col).value = float(column[r])
                 current_row += 1
         book.save('Sources/Packages.xlsx')
+        git_push()
 
         return html.Div(tab + " Paketi Bilgileri Güncellendi !"), True, dash.no_update,
 
