@@ -5,7 +5,6 @@ from objects import *
 from functions import *
 
 fiyat_table_columns = [{'id':i, 'name':i, 'editable':(i=='Iskontosuz Fiyat' or i=='Iskonto')} for i in df_fiyat.columns]
-fiyat_table_columns.pop(-1)
 package_table_columns = [{'id':i, 'name':i, 'editable':(i in packages)} for i in df_retail.columns]
 
 
