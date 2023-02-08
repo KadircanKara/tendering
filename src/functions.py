@@ -228,6 +228,7 @@ def check_upload(contents):
             else :
 
                 wb.save('Sources/FiyatListesi.xlsx')
+                git_push()
                 color = 'success'
                 return success_msg , color
 
@@ -347,6 +348,7 @@ def check_upload(contents):
         else :
 
             wb.save('Sources/Packages.xlsx')
+            git_push()
 
 
         return msg,color

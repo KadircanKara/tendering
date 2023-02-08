@@ -364,7 +364,7 @@ dbc.Row(children=[
     dbc.Col( dbc.Button( id='fiyat_button', children='Fiyat Tablosu', n_clicks=0, outline=True, color='transparent', size='lg'), style={'color':'#6f42c1'}, width=2),
     dbc.Col( dbc.Popover('Fiyat Tablosunu Kaydetmek için Tıklayın !', target="fiyat_button", body=True, trigger="hover", hide_arrow=True, style={'backgroundColor':'transparent', 'border': '0.2px solid', 'outline-color':'#1ba2f6'}) ),
     dbc.Col( html.Div(id='fiyat_dummy'), width=1 ),
-    dbc.Col( dbc.Popover('Fiyat Tablosunu Varsayılana Çevirmek için Tıklayın !', target="fiyat_reset_button", body=True, trigger="hover", hide_arrow=True, style={'backgroundColor':'transparent', 'border': '0.2px solid', 'outline-color':'#1ba2f6'}) ),
+    dbc.Col( dbc.Popover('Fiyat Tablosunu Varsayılana Çevirmek için Tıklayın !', target="fiyat_reset_button", body=True, trigger="hover", hide_arrow=True, placement='left', style={'backgroundColor':'transparent', 'border': '0.2px solid', 'outline-color':'#1ba2f6'}) ),
     dbc.Col( dbc.Button( id='fiyat_reset_button', children='Varsayılana Çevir', n_clicks=0, outline=False, color='transparent', size='lg', style={'color':'#ea39b8'} ), style={'color':'#ea39b8'}, width={'offset':2} ),
 
 ]),
@@ -406,7 +406,7 @@ dbc.Row(children=[
     dbc.Col( dbc.Button( id='paket_button', children='Paket Tablosu', n_clicks=0, outline=False, color='Info', size='lg' ), style={'color':'#6f42c1'} ),
     dbc.Col( dbc.Popover('Paket Tablosunu Kaydetmek için Tıklayın !', target="paket_button", body=True, trigger="hover", hide_arrow=True, style={'backgroundColor':'transparent', 'border': '0.2px solid', 'outline-color':'#1ba2f6'}) ),
     dbc.Col( html.Div(id='paket_dummy'), width=1 ),
-    dbc.Col( dbc.Popover('Paket Tablosunu Varsayılana Çevirmek için Tıklayın !', target="paket_reset_button", body=True, trigger="hover", hide_arrow=True, style={'backgroundColor':'transparent', 'border': '0.2px solid', 'outline-color':'#1ba2f6'}) ),
+    dbc.Col( dbc.Popover('Paket Tablosunu Varsayılana Çevirmek için Tıklayın !', target="paket_reset_button", body=True, trigger="hover", hide_arrow=True, placement='left', style={'backgroundColor':'transparent', 'border': '0.2px solid', 'outline-color':'#1ba2f6'}, ) ),
     dbc.Col( dbc.Button( id='paket_reset_button', children='Varsayılana Çevir', n_clicks=0, outline=False, color='transparent', size='lg', style={'color':'#ea39b8'} ), style={'color':'#ea39b8'}, width={'offset':2} ),
 
 ]),
