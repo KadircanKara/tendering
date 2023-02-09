@@ -111,8 +111,8 @@ def update_fiyat(nclicks, data):
                 if column[r]:
                     ws.cell(row=current_row, column=current_col).value = float(column[r])
                 current_row += 1
-        book.save('Sources/FiyatListesi.xlsx')
-        git_push(LOCAL_PATH)
+        book.save('src/Sources/FiyatListesi.xlsx')
+        # git_push(LOCAL_PATH)
 
 
         return html.Div( "Fiyat Bilgileri Güncellendi !"), True, dash.no_update,
@@ -151,8 +151,8 @@ def update_paket(nclicks, tab, data):
                 if column[r]:
                     ws.cell(row=current_row, column=current_col).value = float(column[r])
                 current_row += 1
-        book.save('Sources/Packages.xlsx')
-        git_push(LOCAL_PATH)
+        book.save('src/Sources/Packages.xlsx')
+        # git_push(LOCAL_PATH)
 
         return html.Div(tab + " Paketi Bilgileri Güncellendi !"), True, dash.no_update,
 
