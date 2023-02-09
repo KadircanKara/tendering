@@ -11,9 +11,9 @@ from objects import *
 from git import Repo
 import os
 
-LOCAL_PATH = os.getcwd()
 
-def git_push(LOCAL_PATH):
+def git_push():
+    LOCAL_PATH = os.path.dirname(os.getcwd())
     COMMIT_MESSAGE = 'Updated Excel File'
     try:
         repo = Repo(LOCAL_PATH)
@@ -48,7 +48,8 @@ def load_fiyat():
     df_fiyat = pd.read_excel("Sources/FiyatListesi.xlsx")
     df_fiyat.columns.str.match("Unnamed")
     df_fiyat.drop(df_fiyat.loc[:,df_fiyat.columns.str.match("Unnamed")], axis=1, inplace=True)
-    return df_fiyat
+    columns = list(df_fiyat.columns)
+    return df_fiyat , columns
 
 def load_all_sources():
 
@@ -401,6 +402,9 @@ def cihaz_row(cihaz):
 
             dbc.Row(children=[
 
+                # dbc.Col( dbc.Label(children=cihaz , style=input_style), width=2 ),
+                # dbc.Col( dbc.Select(id=cihaz, placeholder="", disabled=True), width=2),
+
                 dbc.Col(
 
                     dbc.InputGroup(
@@ -412,8 +416,11 @@ def cihaz_row(cihaz):
                 ),
 
                 dbc.Col(
-                    dbc.Input(id='{}_num'.format(cihaz), type='number', placeholder='Adet', min=0, step=1, style=input_style), width=1
+                    dbc.Input(id='{}_num'.format(cihaz), type='number', placeholder='Adet', min=0, step=1, style=small_input_style), width=1
                 ),
+
+                # dbc.Col( dbc.Label(children="Ek {}".format(cihaz) , style=input_style), width=2 ),
+                # dbc.Col( dbc.Select(id='ek_{}'.format(cihaz), placeholder=""), width=2 ),
 
                 dbc.Col(
 
@@ -426,11 +433,11 @@ def cihaz_row(cihaz):
                 ),
 
                 dbc.Col(
-                    dbc.Input(id='ek_{}_ic'.format(cihaz), type='number', placeholder='İç', min=0, step=1 , style=input_style), width=1
+                    dbc.Input(id='ek_{}_ic'.format(cihaz), type='number', placeholder='İç', min=0, step=1 , style=small_input_style), width=1
                 ),
 
                 dbc.Col(
-                    dbc.Input(id='ek_{}_dis'.format(cihaz), type='number', placeholder='Dış', min=0, step=1 , style=input_style), width=1
+                    dbc.Input(id='ek_{}_dis'.format(cihaz), type='number', placeholder='Dış', min=0, step=1 , style=small_input_style), width=1
                 ),
 
             ]),

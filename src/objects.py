@@ -7,7 +7,8 @@ sys.path.append(".")
 
 IMAGE = 'assets/1572594055044.png'
 
-input_style={'background-color':'transparent','color':'white'}
+input_style={'background-color':'transparent','color':'white', 'width':'20%'}
+small_input_style={'background-color':'transparent','color':'white', 'width':'30%'}
 select_style={'background-color':'transparent','border-color':'red'}
 
 packages = ['Access', 'Starter', 'Standard', 'Full-stack']
@@ -23,24 +24,24 @@ old_submit_button = dbc.Button("Giriş", id="verify", n_clicks=0,
                                    'color': 'black', "width": "9.375rem"})
 
 
-df_fiyat = pd.read_excel("Sources/FiyatListesi.xlsx")
-df_retail = pd.read_excel("Sources/Packages.xlsx" , sheet_name='Retail')
-df_Banking = pd.read_excel("Sources/Packages.xlsx", sheet_name='Banking')
-df_Hospital = pd.read_excel("Sources/Packages.xlsx", sheet_name='Hospital')
-df_Supermarkets = pd.read_excel("Sources/Packages.xlsx", sheet_name='Supermarkets')
-df_Industry = pd.read_excel("Sources/Packages.xlsx", sheet_name='Industry')
-wb = xl.load_workbook("Sources/Source.xlsx")
+# df_fiyat = pd.read_excel("Sources/FiyatListesi.xlsx")
+# df_retail = pd.read_excel("Sources/Packages.xlsx" , sheet_name='Retail')
+# df_Banking = pd.read_excel("Sources/Packages.xlsx", sheet_name='Banking')
+# df_Hospital = pd.read_excel("Sources/Packages.xlsx", sheet_name='Hospital')
+# df_Supermarkets = pd.read_excel("Sources/Packages.xlsx", sheet_name='Supermarkets')
+# df_Industry = pd.read_excel("Sources/Packages.xlsx", sheet_name='Industry')
+# wb = xl.load_workbook("Sources/Source.xlsx")
 
-df_fiyat.columns.str.match("Unnamed")
-df_fiyat.drop(df_fiyat.loc[:,df_fiyat.columns.str.match("Unnamed")], axis=1, inplace=True)
+# df_fiyat.columns.str.match("Unnamed")
+# df_fiyat.drop(df_fiyat.loc[:,df_fiyat.columns.str.match("Unnamed")], axis=1, inplace=True)
 
-df_packages = {'Retail':df_retail, 'Banking':df_Banking, 'Hospital':df_Hospital, 'Supermarkets':df_Supermarkets, 'Industry':df_Industry}
+# df_packages = {'Retail':df_retail, 'Banking':df_Banking, 'Hospital':df_Hospital, 'Supermarkets':df_Supermarkets, 'Industry':df_Industry}
 
-for df in df_packages.values():
-    df.rename(columns={'Unnamed: 1':'Access Cihaz' , 'Unnamed: 3':'Starter Cihaz' , 'Unnamed: 5':'Standard Cihaz' , 'Unnamed: 7':'Full-stack Cihaz'},inplace=True)
+# for df in df_packages.values():
+#     df.rename(columns={'Unnamed: 1':'Access Cihaz' , 'Unnamed: 3':'Starter Cihaz' , 'Unnamed: 5':'Standard Cihaz' , 'Unnamed: 7':'Full-stack Cihaz'},inplace=True)
 
-df_packages_copy = df_packages.copy()
-df_fiyat_copy = df_fiyat.copy()
+# df_packages_copy = df_packages.copy()
+# df_fiyat_copy = df_fiyat.copy()
 
 
 uploadStyle = {

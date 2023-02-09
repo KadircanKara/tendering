@@ -10,6 +10,7 @@ from objects import *
 from app_pages import *
 from git import Repo
 import os
+import time
 
 df_fiyat, df_packages, wb = load_all_sources()
 df_fiyat_copy, df_packages_copy = df_fiyat.copy(), df_packages.copy()
@@ -19,6 +20,7 @@ LOCAL_PATH = os.getcwd()
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.VAPOR], suppress_callback_exceptions=True, meta_tags=[{'name': 'viewport',
                              'content': 'width=device-width, initial-scale=1.0, maximum-scale=1.2, minimum-scale=0.5,'}]
                 )
+
 server = app.server
 
 app.title = 'Faradai Tendering Process'
@@ -66,7 +68,7 @@ app.layout = html.Div(id="main" , children=[
 def reset_paket_table(nclicks, tab):
 
     if nclicks > 0 :
-        return df_packages_copy[tab].to_dict('records')
+        return load_specific_packages(tab).to_dict('records')
 
     if tab :
         return load_specific_packages(tab).to_dict('records')
@@ -75,14 +77,14 @@ def reset_paket_table(nclicks, tab):
 @app.callback(
 
     Output('fiyat_table','data'),
-    Input('fiyat_reset_button','n_clicks')
+    Input('fiyat_reset_button','n_clicks'),
 
 )
 
-def reset_fiyat_table(nclicks):
+def reset_fiyat_table(reset_nclicks):
 
-    if nclicks > 0 :
-        return df_fiyat_copy.to_dict('records')
+    if reset_nclicks > 0 :
+        return load_fiyat()[0].to_dict('records')
     else :
         raise PreventUpdate
 
@@ -115,11 +117,9 @@ def update_fiyat(nclicks, data):
                     ws.cell(row=current_row, column=current_col).value = float(column[r])
                 current_row += 1
         book.save('Sources/FiyatListesi.xlsx')
-        # git_push(LOCAL_PATH)
+        git_push()
 
-
-        return html.Div( "Fiyat Bilgileri Güncellendi !"), True, dash.no_update,
-
+        return html.Div( "Fiyat Bilgileri Güncellendi !"), True, dash.no_update
 
     else :
         raise PreventUpdate
@@ -155,7 +155,7 @@ def update_paket(nclicks, tab, data):
                     ws.cell(row=current_row, column=current_col).value = float(column[r])
                 current_row += 1
         book.save('Sources/Packages.xlsx')
-        # git_push(LOCAL_PATH)
+        git_push()
 
         return html.Div(tab + " Paketi Bilgileri Güncellendi !"), True, dash.no_update,
 
@@ -208,14 +208,14 @@ def show_page(nclicks,user,passw,url):
     if url=='/Teklif' or url=='/':
         if nclicks > 0 and user=='reengen' and passw=='rngn2021!':
             
-            return offer_page
+            return offer_page()
         else:
             return login_page
 
     elif url=='/Kaynaklar':
         if nclicks > 0 and user=='reengen' and passw=='rngn2021!':
             
-            return resources_page
+            return resources_page()
         else:
             return login_page
 
@@ -754,4 +754,4 @@ def required_devices_border(kategori, paket, gateway, trifaz, akim, sicaklik, su
 
 
 if __name__ == "__main__":
-    app.run_server(debug=True , port=8012)
+    app.run_server(debug=True)

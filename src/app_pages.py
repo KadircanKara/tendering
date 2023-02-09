@@ -4,8 +4,11 @@ from dash import html, dcc, dash_table
 from objects import *
 from functions import *
 
+df_fiyat, df_packages, wb = load_all_sources()
+df_fiyat_copy, df_packages_copy = df_fiyat.copy(), df_packages.copy()
+
 fiyat_table_columns = [{'id':i, 'name':i, 'editable':(i=='Iskontosuz Fiyat' or i=='Iskonto')} for i in df_fiyat.columns]
-package_table_columns = [{'id':i, 'name':i, 'editable':(i in packages)} for i in df_retail.columns]
+package_table_columns = [{'id':i, 'name':i, 'editable':(i in packages)} for i in df_packages['Retail'].columns]
 
 
 navbar = html.Div([
@@ -99,7 +102,9 @@ login_page = html.Div([
               'position':'fixed', 'width':'100%', 'verticalAlign':'middle',
               'background-position': 'center', "height": "100%"})
 
-offer_page = html.Div([
+def offer_page() :
+
+    layout = html.Div([
                 html.Div([
                     dbc.Navbar(
                         dbc.Container(
@@ -183,49 +188,27 @@ offer_page = html.Div([
                             [dbc.InputGroupText("Proje Adı" , style=input_style),
                                 dbc.Input(id='proje_adi', placeholder="", invalid=True, disabled=False , style=input_style)],
                             className="mb-3",
-                        ), width=5, style={'margin-left': '55px'}),
+                        ), width=2, style={'margin-left': '55px'}),
 
-                    dbc.Col(
-
-                        dbc.InputGroup(
-                            [dbc.InputGroupText("Şehir İçi Şube Sayısı" , style=input_style),
-                                dbc.Input(id='sehir_ici', placeholder="", invalid=True, disabled=False, type='number', style=input_style,
-                                        step=1, min=0)],
-                            className="mb-3",
-                        ), width=3
-                    ),
-
-                    dbc.Col(
-
-                        dbc.InputGroup(
-                            [dbc.InputGroupText("Şehir Dışı Şube Sayısı" , style=input_style),
-                                dbc.Input(id='sehir_disi', placeholder="", invalid=True, disabled=False, type='number', style=input_style,
-                                        step=1, min=0)],
-                            className="mb-3",
-                        ), width=3
-                    ),
-
-                ]),
-
-                dbc.Row(children=[
                     dbc.Col(
 
                         dbc.InputGroup(
                             [dbc.InputGroupText("Müşteri Adı" , style=input_style),
                                 dbc.Input(id='musteri_adi', placeholder="", invalid=True, disabled=False, style=input_style)],
                             className="mb-3", size=2
-                        ), style={'margin-left': '55px'}, width=5),
+                        ), style={'margin-left': '55px'}, width=2),
 
                     dbc.Col(
 
                         dbc.InputGroup(
                             [dbc.InputGroupText("Teklifi Hazırlayan" , style=input_style),
                                 dbc.Input(id='teklifi_hazirlayan', placeholder="", invalid=True, disabled=False , style=input_style)],
-                            className="mb-3", size=2
-                        ), width=6),
+                            className="mb-3", size=3
+                        ), width=3, style={'margin-left':'55px'})
+
                 ]),
 
-                dbc.Row(children=[
+                dbc.Row([
 
                     dbc.Col(
 
@@ -242,7 +225,7 @@ offer_page = html.Div([
                                         ],
                                         )],
                             className="mb-3", size=2
-                        ), style={'margin-left': '55px'}, width=3),
+                        ), style={'margin-left': '55px'}, width=2),
 
                     dbc.Col(
 
@@ -258,8 +241,30 @@ offer_page = html.Div([
                                         ],
                                         )],
                             className="mb-3", size=4
-                        ), width={'size': 3, 'offset': 2})
+                        ), width={'size': 2}, style={'margin-left':'55px'}),
+
+                    dbc.Col(
+
+                        dbc.InputGroup(
+                            [dbc.InputGroupText("Şehir İçi Şube Sayısı" , style=small_input_style),
+                                dbc.Input(id='sehir_ici', placeholder="", invalid=True, disabled=False, type='number', style=input_style,
+                                        step=1, min=0)],
+                            className="mb-3",
+                        ), width=3, style={'margin-left':'55px'}
+                    ),
+
+                    dbc.Col(
+
+                        dbc.InputGroup(
+                            [dbc.InputGroupText("Şehir Dışı Şube Sayısı" , style=small_input_style),
+                                dbc.Input(id='sehir_disi', placeholder="", invalid=True, disabled=False, type='number', style=input_style,
+                                        step=1, min=0)],
+                            className="mb-3",
+                        ), width=3, style={'margin-left':'55px'}
+                    )
+
                 ]),
+
 
                 dbc.Row(children=[
 
@@ -313,145 +318,157 @@ offer_page = html.Div([
 
                 ])
 
-resources_page = html.Div([
+    return layout
 
-html.Div(children=navbar),
+def resources_page():
 
-dbc.Row(
-    dbc.Col(
-        dbc.Alert(id='alert_upload', dismissable=True, is_open=False, duration=10000, color='secondary') , style={'text-align':'center'}, width={'size':3, 'offset':9}
-    ) 
-    ),
+     df_fiyat, df_packages, wb = load_all_sources()
+     fiyat_table_columns = [{'id':i, 'name':i, 'editable':(i=='Iskontosuz Fiyat' or i=='Iskonto')} for i in df_fiyat.columns]
+     package_table_columns = [{'id':i, 'name':i, 'editable':(i in packages)} for i in df_packages['Retail'].columns]
+    
+     return ( html.Div([
 
-html.Br(),
-html.Br(),
+        html.Div(children=navbar),
 
-dbc.Container([
+        dbc.Row(
+            dbc.Col(
+                dbc.Alert(id='alert_upload', dismissable=True, is_open=False, duration=10000, color='secondary') , style={'text-align':'center'}, width={'size':3, 'offset':9}
+            ) 
+            ),
 
-    dbc.Row([
+        html.Br(),
+        html.Br(),
 
-        dbc.Col( [html.Img(src="/assets/download.svg", style={'margin-left':'15px'}), dbc.Button('Örnek Fiyat Dosyası İndir', download='FiyatListesi.xlsx', href='/static/FiyatListesi.xlsx', external_link=True, color='transparent', size='lg', outline=False, style={'color':'#ea39b8'})],  width={'offset':1} ),
+        dbc.Container([
 
-        dbc.Col( [html.Img(src="/assets/download.svg", style={'margin-left':'15px'}), dbc.Button('Örnek Paket Dosyası İndir', download='Packages.xlsx', href='/static/Packages.xlsx', external_link=True, color='transparent', size='lg', outline=False, style={'color':'#ea39b8'})], width={'offset':3} ),
+            dbc.Row([
 
-    ]),
+                dbc.Col( [html.Img(src="/assets/download.svg", style={'margin-left':'15px'}), dbc.Button('Örnek Fiyat Dosyası İndir', download='FiyatListesi.xlsx', href='/static/FiyatListesi.xlsx', external_link=True, color='transparent', size='lg', outline=False, style={'color':'#ea39b8'})],  width={'offset':1} ),
 
-    dbc.Row([
-        dbc.Col([
-            dcc.Upload(
-                id='upload_fiyat',
-                children='Fiyat Dosyası Yükleyebilirsiniz',
-                multiple=False,
-                style=uploadStyle
-            )
+                dbc.Col( [html.Img(src="/assets/download.svg", style={'margin-left':'15px'}), dbc.Button('Örnek Paket Dosyası İndir', download='Packages.xlsx', href='/static/Packages.xlsx', external_link=True, color='transparent', size='lg', outline=False, style={'color':'#ea39b8'})], width={'offset':3} ),
+
+            ]),
+
+            dbc.Row([
+                dbc.Col([
+                    dcc.Upload(
+                        id='upload_fiyat',
+                        children='Fiyat Dosyası Yükleyebilirsiniz',
+                        multiple=False,
+                        style=uploadStyle
+                    )
+                ]),
+                dbc.Col([
+                    dcc.Upload(
+                        id='upload_paket',
+                        children='Paket Dosyası Yükleyebilirsiniz',
+                        multiple=False,
+                        style=uploadStyle
+                    )
+                ], width={'offset':2})
+
+            ]),
+
+        html.Br(),
+
+
+        dbc.Row(children=[
+
+            dbc.Col( dbc.Button( id='fiyat_button', children='Fiyat Tablosu', n_clicks=0, outline=True, color='transparent', size='lg'), style={'color':'#6f42c1'}, width=2),
+            dbc.Col( dbc.Popover('Fiyat Tablosunu Kaydetmek için Tıklayın !', target="fiyat_button", body=True, trigger="hover", hide_arrow=True, style={'backgroundColor':'transparent', 'border': '0.2px solid', 'outline-color':'#1ba2f6'}) ),
+            dbc.Col( html.Div(id='fiyat_dummy'), width=1 ),
+            dbc.Col( dbc.Popover('Fiyat Tablosunu Varsayılana Çevirmek için Tıklayın !', target="fiyat_reset_button", body=True, trigger="hover", hide_arrow=True, placement='left', style={'backgroundColor':'transparent', 'border': '0.2px solid', 'outline-color':'#1ba2f6'}) ),
+            dbc.Col( dbc.Button( id='fiyat_reset_button', children='Varsayılana Çevir', n_clicks=0, outline=False, color='transparent', size='lg', style={'color':'#ea39b8'} ), style={'color':'#ea39b8'}, width={'offset':2} ),
+
         ]),
-        dbc.Col([
-            dcc.Upload(
-                id='upload_paket',
-                children='Paket Dosyası Yükleyebilirsiniz',
-                multiple=False,
-                style=uploadStyle
+
+        html.Br(),
+
+        dbc.Row(
+
+            dbc.Col( dbc.Alert(id='fiyat_table_alert', dismissable=True, duration=5000, color='success', is_open=False) ),
+
+        ),
+
+        html.Br(),
+
+        dbc.Row(
+
+            dbc.Col(
+
+                dash_table.DataTable(id='fiyat_table', editable=False, style_data={'color':'white', 'backgroundColor':'transparent'} , 
+                                                                    style_header={'backgroundColor':'rgb(30, 30, 30)' , 'color':'white','textAlign':'center','font-weight':'bold'} , 
+                                                                    style_as_list_view=False,
+                                                                    style_cell={'width':'50px', 'padding':'5px'},
+                                                                    
+                                                                    columns=fiyat_table_columns,
+                                                                    data=df_fiyat.to_dict('records'),
+                                                                    fill_width=True
+                                                                    )
+
+            ),
+
+            style={'margin-left':'5px'}
+
+        ),
+
+        html.Br(),
+
+        dbc.Row(children=[
+
+            dbc.Col( dbc.Button( id='paket_button', children='Paket Tablosu', n_clicks=0, outline=False, color='Info', size='lg' ), style={'color':'#6f42c1'} ),
+            dbc.Col( dbc.Popover('Paket Tablosunu Kaydetmek için Tıklayın !', target="paket_button", body=True, trigger="hover", hide_arrow=True, style={'backgroundColor':'transparent', 'border': '0.2px solid', 'outline-color':'#1ba2f6'}) ),
+            dbc.Col( html.Div(id='paket_dummy'), width=1 ),
+            dbc.Col( dbc.Popover('Paket Tablosunu Varsayılana Çevirmek için Tıklayın !', target="paket_reset_button", body=True, trigger="hover", hide_arrow=True, placement='left', style={'backgroundColor':'transparent', 'border': '0.2px solid', 'outline-color':'#1ba2f6'}, ) ),
+            dbc.Col( dbc.Button( id='paket_reset_button', children='Varsayılana Çevir', n_clicks=0, outline=False, color='transparent', size='lg', style={'color':'#ea39b8'} ), style={'color':'#ea39b8'}, width={'offset':2} ),
+
+        ]),
+
+        html.Br(),
+
+        dbc.Row(
+                dbc.Col( dbc.Alert(id='paket_table_alert', dismissable=True, duration=5000, color='success', is_open=False), width=5 ),
+        ),
+
+
+        dbc.Row([
+            dbc.Col(
+                dbc.Tabs([
+                                        dbc.Tab(label='Retail' , tab_id='Retail'),
+                                        dbc.Tab(label='Banking' , tab_id='Banking'),
+                                        dbc.Tab(label='Hospital' , tab_id='Hospital'),
+                                        dbc.Tab(label='Supermarkets' , tab_id='Supermarkets'),
+                                        dbc.Tab(label='Industry' , tab_id='Industry'),
+
+                            ] , id='tabs' , active_tab='Retail'),
+
             )
-        ], width={'offset':2})
+                    
+        ]),
 
-    ]),
+        dbc.Row(
 
-html.Br(),
+            dbc.Col(
 
+                dash_table.DataTable(id='paket_table', editable=False, style_data={'color':'white', 'backgroundColor':'transparent'} , 
+                                                                    style_header={'backgroundColor':'rgb(30, 30, 30)' , 'color':'white','textAlign':'center','font-weight':'bold'} , 
+                                                                    style_as_list_view=False,
+                                                                    style_cell={'width':'50px', 'padding':'5px'},
+                                                                    
+                                                                    columns=package_table_columns,
+                                                                    data=df_packages['Retail'].to_dict('records'),
+                                                                    fill_width=True
+                                                                    ),
 
-dbc.Row(children=[
+            style={'margin-left':'15px'})
 
-    dbc.Col( dbc.Button( id='fiyat_button', children='Fiyat Tablosu', n_clicks=0, outline=True, color='transparent', size='lg'), style={'color':'#6f42c1'}, width=2),
-    dbc.Col( dbc.Popover('Fiyat Tablosunu Kaydetmek için Tıklayın !', target="fiyat_button", body=True, trigger="hover", hide_arrow=True, style={'backgroundColor':'transparent', 'border': '0.2px solid', 'outline-color':'#1ba2f6'}) ),
-    dbc.Col( html.Div(id='fiyat_dummy'), width=1 ),
-    dbc.Col( dbc.Popover('Fiyat Tablosunu Varsayılana Çevirmek için Tıklayın !', target="fiyat_reset_button", body=True, trigger="hover", hide_arrow=True, placement='left', style={'backgroundColor':'transparent', 'border': '0.2px solid', 'outline-color':'#1ba2f6'}) ),
-    dbc.Col( dbc.Button( id='fiyat_reset_button', children='Varsayılana Çevir', n_clicks=0, outline=False, color='transparent', size='lg', style={'color':'#ea39b8'} ), style={'color':'#ea39b8'}, width={'offset':2} ),
+        ),
 
-]),
+        dbc.Row(dcc.Location(id='url' , refresh=True))
 
-html.Br(),
-
-dbc.Row(
-
-    dbc.Col( dbc.Alert(id='fiyat_table_alert', dismissable=True, duration=5000, color='success', is_open=False) ),
-
-),
-
-html.Br(),
-
-dbc.Row(
-
-    dbc.Col(
-
-        dash_table.DataTable(id='fiyat_table', editable=False, style_data={'color':'white', 'backgroundColor':'transparent'} , 
-                                                            style_header={'backgroundColor':'rgb(30, 30, 30)' , 'color':'white','textAlign':'center','font-weight':'bold'} , 
-                                                            style_as_list_view=False,
-                                                            style_cell={'width':'50px', 'padding':'5px'},
-                                                            
-                                                            columns=fiyat_table_columns,
-                                                            data=df_fiyat.to_dict('records'),
-                                                            fill_width=True
-                                                            )
-
-    ),
-
-    style={'margin-left':'5px'}
-
-),
-
-html.Br(),
-
-dbc.Row(children=[
-
-    dbc.Col( dbc.Button( id='paket_button', children='Paket Tablosu', n_clicks=0, outline=False, color='Info', size='lg' ), style={'color':'#6f42c1'} ),
-    dbc.Col( dbc.Popover('Paket Tablosunu Kaydetmek için Tıklayın !', target="paket_button", body=True, trigger="hover", hide_arrow=True, style={'backgroundColor':'transparent', 'border': '0.2px solid', 'outline-color':'#1ba2f6'}) ),
-    dbc.Col( html.Div(id='paket_dummy'), width=1 ),
-    dbc.Col( dbc.Popover('Paket Tablosunu Varsayılana Çevirmek için Tıklayın !', target="paket_reset_button", body=True, trigger="hover", hide_arrow=True, placement='left', style={'backgroundColor':'transparent', 'border': '0.2px solid', 'outline-color':'#1ba2f6'}, ) ),
-    dbc.Col( dbc.Button( id='paket_reset_button', children='Varsayılana Çevir', n_clicks=0, outline=False, color='transparent', size='lg', style={'color':'#ea39b8'} ), style={'color':'#ea39b8'}, width={'offset':2} ),
-
-]),
-
-html.Br(),
-
-dbc.Row(
-        dbc.Col( dbc.Alert(id='paket_table_alert', dismissable=True, duration=5000, color='success', is_open=False), width=5 ),
-),
+        ])
 
 
-dbc.Row([
-    dbc.Col(
-        dbc.Tabs([
-                                dbc.Tab(label='Retail' , tab_id='Retail'),
-                                dbc.Tab(label='Banking' , tab_id='Banking'),
-                                dbc.Tab(label='Hospital' , tab_id='Hospital'),
-                                dbc.Tab(label='Supermarkets' , tab_id='Supermarkets'),
-                                dbc.Tab(label='Industry' , tab_id='Industry'),
-
-                    ] , id='tabs' , active_tab='Retail'),
-
-    )
-            
-]),
-
-dbc.Row(
-
-    dbc.Col(
-
-        dash_table.DataTable(id='paket_table', editable=False, style_data={'color':'white', 'backgroundColor':'transparent'} , 
-                                                            style_header={'backgroundColor':'rgb(30, 30, 30)' , 'color':'white','textAlign':'center','font-weight':'bold'} , 
-                                                            style_as_list_view=False,
-                                                            style_cell={'width':'50px', 'padding':'5px'},
-                                                            
-                                                            columns=package_table_columns,
-                                                            data=df_retail.to_dict('records'),
-                                                            fill_width=True
-                                                            ),
-
-    style={'margin-left':'15px'})
-
+    ], style={'margin':'auto'})
+    
 )
-
-])
-
-
-], style={'margin':'auto'})
