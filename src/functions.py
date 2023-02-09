@@ -11,7 +11,7 @@ from objects import *
 from git import Repo
 
 def git_push():
-    PATH_OF_GIT_REPO = 'https://github.com/KadircanKara/tendering.git'
+    PATH_OF_GIT_REPO = '/Users/kadircan/Desktop/Codes/Python/tendering'
     COMMIT_MESSAGE = 'Updated Excel File'
     try:
         repo = Repo(PATH_OF_GIT_REPO)
