@@ -11,7 +11,7 @@ from objects import *
 from git import Repo
 import os
 
-LOCAL_PATH = os.path.dirname(os.getcwd())
+LOCAL_PATH = os.getcwd()
 
 def git_push(LOCAL_PATH):
     COMMIT_MESSAGE = 'Updated Excel File'
@@ -31,7 +31,7 @@ def load_specific_packages(packages:list or str):
         df_packages = {}
 
         for package in packages:
-            df_packages.update({package:pd.read_excel("src/Sources/Packages.xlsx", sheet_name=package)})
+            df_packages.update({package:pd.read_excel("Sources/Packages.xlsx", sheet_name=package)})
 
         for df in df_packages.values():
             df.rename(columns={'Unnamed: 1':'Access Cihaz' , 'Unnamed: 3':'Starter Cihaz' , 'Unnamed: 5':'Standard Cihaz' , 'Unnamed: 7':'Full-stack Cihaz'},inplace=True)
@@ -39,25 +39,25 @@ def load_specific_packages(packages:list or str):
         return df_packages
 
     elif isinstance(packages,str):
-        df = pd.read_excel("src/Sources/Packages.xlsx", sheet_name=packages)
+        df = pd.read_excel("Sources/Packages.xlsx", sheet_name=packages)
         df.rename(columns={'Unnamed: 1':'Access Cihaz' , 'Unnamed: 3':'Starter Cihaz' , 'Unnamed: 5':'Standard Cihaz' , 'Unnamed: 7':'Full-stack Cihaz'},inplace=True)
         return df
 
 
 def load_fiyat():
-    df_fiyat = pd.read_excel("src/Sources/FiyatListesi.xlsx")
+    df_fiyat = pd.read_excel("Sources/FiyatListesi.xlsx")
     df_fiyat.drop(['Unnamed: 6','Unnamed: 7'], axis=1, inplace=True)
     return df_fiyat
 
 def load_all_sources():
 
-    df_fiyat = pd.read_excel("src/Sources/FiyatListesi.xlsx")
-    df_retail = pd.read_excel("src/Sources/Packages.xlsx" , sheet_name='Retail')
-    df_Banking = pd.read_excel("src/Sources/Packages.xlsx", sheet_name='Banking')
-    df_Hospital = pd.read_excel("src/Sources/Packages.xlsx", sheet_name='Hospital')
-    df_Supermarkets = pd.read_excel("src/Sources/Packages.xlsx", sheet_name='Supermarkets')
-    df_Industry = pd.read_excel("src/Sources/Packages.xlsx", sheet_name='Industry')
-    wb = xl.load_workbook("src/Sources/Source.xlsx")
+    df_fiyat = pd.read_excel("Sources/FiyatListesi.xlsx")
+    df_retail = pd.read_excel("Sources/Packages.xlsx" , sheet_name='Retail')
+    df_Banking = pd.read_excel("Sources/Packages.xlsx", sheet_name='Banking')
+    df_Hospital = pd.read_excel("Sources/Packages.xlsx", sheet_name='Hospital')
+    df_Supermarkets = pd.read_excel("Sources/Packages.xlsx", sheet_name='Supermarkets')
+    df_Industry = pd.read_excel("Sources/Packages.xlsx", sheet_name='Industry')
+    wb = xl.load_workbook("Sources/Source.xlsx")
 
     df_fiyat.columns.str.match("Unnamed")
     df_fiyat.drop(df_fiyat.loc[:,df_fiyat.columns.str.match("Unnamed")], axis=1, inplace=True)
@@ -229,7 +229,7 @@ def check_upload(contents):
 
             else :
 
-                wb.save('src/Sources/FiyatListesi.xlsx')
+                wb.save('Sources/FiyatListesi.xlsx')
                 git_push(LOCAL_PATH)
                 color = 'success'
                 return success_msg , color
@@ -349,7 +349,7 @@ def check_upload(contents):
         
         else :
 
-            wb.save('src/Sources/Packages.xlsx')
+            wb.save('Sources/Packages.xlsx')
             git_push(LOCAL_PATH)
 
 

@@ -11,7 +11,7 @@ from app_pages import *
 from git import Repo
 import os
 
-LOCAL_PATH = os.path.abspath(__file__)
+LOCAL_PATH = os.getcwd()
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.VAPOR], suppress_callback_exceptions=True, meta_tags=[{'name': 'viewport',
                              'content': 'width=device-width, initial-scale=1.0, maximum-scale=1.2, minimum-scale=0.5,'}]
@@ -99,7 +99,7 @@ def update_fiyat(nclicks, data):
     if nclicks > 0 :
 
         df = pd.DataFrame.from_dict(data)
-        book = xl.load_workbook('src/Sources/FiyatListesi.xlsx')
+        book = xl.load_workbook('Sources/FiyatListesi.xlsx')
         ws = book.active
         column_data = [df['Iskontosuz Fiyat'], df['Iskonto']]
         current_row = 2
@@ -111,7 +111,7 @@ def update_fiyat(nclicks, data):
                 if column[r]:
                     ws.cell(row=current_row, column=current_col).value = float(column[r])
                 current_row += 1
-        book.save('src/Sources/FiyatListesi.xlsx')
+        book.save('Sources/FiyatListesi.xlsx')
         git_push(LOCAL_PATH)
 
 
@@ -138,7 +138,7 @@ def update_paket(nclicks, tab, data):
     if nclicks > 0 :
 
         df = pd.DataFrame.from_dict(data)
-        book = xl.load_workbook('src/Sources/Packages.xlsx')
+        book = xl.load_workbook('Sources/Packages.xlsx')
         ws = book[tab]
         column_data = [df['Access'], df['Starter'], df['Standard'], df['Full-stack']]
         current_row = 2
@@ -151,7 +151,7 @@ def update_paket(nclicks, tab, data):
                 if column[r]:
                     ws.cell(row=current_row, column=current_col).value = float(column[r])
                 current_row += 1
-        book.save('src/Sources/Packages.xlsx')
+        book.save('Sources/Packages.xlsx')
         git_push(LOCAL_PATH)
 
         return html.Div(tab + " Paketi Bilgileri Güncellendi !"), True, dash.no_update,
