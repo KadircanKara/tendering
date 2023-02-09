@@ -11,7 +11,7 @@ from app_pages import *
 from git import Repo
 import os
 
-LOCAL_PATH = os.getcwd()
+LOCAL_PATH = os.path.dirname(os.getcwd())
 Repo.clone_from('https://github.com/KadircanKara/tendering.git' , LOCAL_PATH)
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.VAPOR], suppress_callback_exceptions=True, meta_tags=[{'name': 'viewport',
@@ -113,7 +113,7 @@ def update_fiyat(nclicks, data):
                     ws.cell(row=current_row, column=current_col).value = float(column[r])
                 current_row += 1
         book.save('src/Sources/FiyatListesi.xlsx')
-        git_push()
+        git_push(LOCAL_PATH)
 
 
         return html.Div( "Fiyat Bilgileri Güncellendi !"), True, dash.no_update,
@@ -153,7 +153,7 @@ def update_paket(nclicks, tab, data):
                     ws.cell(row=current_row, column=current_col).value = float(column[r])
                 current_row += 1
         book.save('src/Sources/Packages.xlsx')
-        git_push()
+        git_push(LOCAL_PATH)
 
         return html.Div(tab + " Paketi Bilgileri Güncellendi !"), True, dash.no_update,
 
