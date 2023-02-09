@@ -17,7 +17,7 @@ def git_push():
     COMMIT_MESSAGE = 'Updated Excel File'
     try:
         repo = Repo(LOCAL_PATH)
-        repo.git.add(update=True)
+        repo.git.add('*')
         repo.index.commit(COMMIT_MESSAGE)
         origin = repo.remote(name='origin')
         origin.push()
