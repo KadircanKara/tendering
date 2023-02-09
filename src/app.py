@@ -11,6 +11,9 @@ from app_pages import *
 from git import Repo
 import os
 
+df_fiyat, df_packages, wb = load_all_sources()
+df_fiyat_copy, df_packages_copy = df_fiyat.copy(), df_packages.copy()
+
 LOCAL_PATH = os.getcwd()
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.VAPOR], suppress_callback_exceptions=True, meta_tags=[{'name': 'viewport',

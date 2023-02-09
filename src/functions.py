@@ -46,7 +46,8 @@ def load_specific_packages(packages:list or str):
 
 def load_fiyat():
     df_fiyat = pd.read_excel("Sources/FiyatListesi.xlsx")
-    df_fiyat.drop(['Unnamed: 6','Unnamed: 7'], axis=1, inplace=True)
+    df_fiyat.columns.str.match("Unnamed")
+    df_fiyat.drop(df_fiyat.loc[:,df_fiyat.columns.str.match("Unnamed")], axis=1, inplace=True)
     return df_fiyat
 
 def load_all_sources():
