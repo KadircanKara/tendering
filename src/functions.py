@@ -11,7 +11,7 @@ from objects import *
 from git import Repo
 import os
 
-LOCAL_PATH = os.getcwd()
+LOCAL_PATH = os.path.dirname(os.getcwd())
 
 def git_push(LOCAL_PATH):
     COMMIT_MESSAGE = 'Updated Excel File'
