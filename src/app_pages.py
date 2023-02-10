@@ -400,6 +400,9 @@ def resources_page():
                                                                     style_header={'backgroundColor':'rgb(30, 30, 30)' , 'color':'white','textAlign':'center','font-weight':'bold'} , 
                                                                     style_as_list_view=False,
                                                                     style_cell={'width':'50px', 'padding':'5px'},
+                                                                    filter_action='native',
+                                                                    filter_options={'case':'insensitive'},
+                                                                    style_filter={'backgroundColor':'rgb(30, 30, 30)' , 'border-style':'solid', 'placeholder':'filter data'},
                                                                     
                                                                     columns=fiyat_table_columns,
                                                                     data=df_fiyat.to_dict('records'),
