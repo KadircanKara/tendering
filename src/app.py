@@ -1,21 +1,15 @@
 import dash
-from dash_iconify import DashIconify
 from dash import html, dcc
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 from openpyxl.styles import Alignment
-from dash_bootstrap_components._components.Container import Container
 from functions import *
 from objects import *
 from app_pages import *
-from git import Repo
-import os
-import time
 
 df_fiyat, df_packages, wb = load_all_sources()
 df_fiyat_copy, df_packages_copy = df_fiyat.copy(), df_packages.copy()
 
-LOCAL_PATH = os.getcwd()
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.VAPOR], suppress_callback_exceptions=True, meta_tags=[{'name': 'viewport',
                              'content': 'width=device-width, initial-scale=1.0, maximum-scale=1.2, minimum-scale=0.5,'}]
