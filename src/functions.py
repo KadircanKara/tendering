@@ -8,21 +8,8 @@ from tradingview_ta import TA_Handler, Interval
 from dash import  html
 import dash_bootstrap_components as dbc
 from objects import *
-from git import Repo
 import os
 
-
-# def git_push():
-#     LOCAL_PATH = os.path.dirname(os.getcwd())
-#     COMMIT_MESSAGE = 'Updated Excel File'
-#     try:
-#         repo = Repo(LOCAL_PATH)
-#         repo.git.add('*')
-#         repo.index.commit(COMMIT_MESSAGE)
-#         origin = repo.remote(name='origin')
-#         origin.push()
-#     except:
-#         print('Some error occured while pushing the code')
 
 def load_specific_packages(packages:list or str):
 
