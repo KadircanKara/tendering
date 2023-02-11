@@ -55,29 +55,32 @@ app.layout = html.Div(id="main" , children=[
 
     Output('paket_table','data'),
     Input('paket_reset_button','n_clicks'),
-    Input('tabs','active_tab')
+    Input('tabs','active_tab'),
+    Input('alert_paket','is_open'),
+    State('alert_paket','color'),
 
 )
 
-def reset_paket_table(nclicks, tab):
+def reset_paket_table(nclicks_paket_reset, tab, isopen, color):
 
-    if nclicks > 0 :
+    if nclicks_paket_reset > 0 or tab or (isopen and (color == 'success')) :
         return load_specific_packages(tab).to_dict('records')
-
-    if tab :
-        return load_specific_packages(tab).to_dict('records')
-
+    else :
+        raise PreventUpdate
 
 @app.callback(
 
     Output('fiyat_table','data'),
     Input('fiyat_reset_button','n_clicks'),
+    Input('alert_fiyat','is_open'),
+    State('alert_fiyat','color'),
+
 
 )
 
-def reset_fiyat_table(reset_nclicks):
+def reset_fiyat_table(fiyat_reset_nclicks, isopen, color):
 
-    if reset_nclicks > 0 :
+    if fiyat_reset_nclicks > 0 or (isopen and (color == 'success')) :
         return load_fiyat()[0].to_dict('records')
     else :
         raise PreventUpdate
@@ -111,9 +114,10 @@ def update_fiyat(nclicks, data):
                     ws.cell(row=current_row, column=current_col).value = float(column[r])
                 current_row += 1
         book.save('Sources/FiyatListesi.xlsx')
+        book.save('static/FiyatListesi.xlsx')
         # git_push()
 
-        return html.Div( "Fiyat Bilgileri Güncellendi !"), True, dash.no_update
+        return html.Div( "Fiyat Bilgileri Güncellendi"), True, dash.no_update
 
     else :
         raise PreventUpdate
@@ -149,9 +153,10 @@ def update_paket(nclicks, tab, data):
                     ws.cell(row=current_row, column=current_col).value = float(column[r])
                 current_row += 1
         book.save('Sources/Packages.xlsx')
+        book.save('static/Packages.xlsx')
         # git_push()
 
-        return html.Div(tab + " Paketi Bilgileri Güncellendi !"), True, dash.no_update,
+        return html.Div(tab + " Paketi Bilgileri Güncellendi"), True, dash.no_update,
 
     else :
         raise PreventUpdate
@@ -159,33 +164,55 @@ def update_paket(nclicks, tab, data):
 
 @app.callback(
 
-    Output('alert_upload','children'),
-    Output('alert_upload','is_open'),
-    Output('alert_upload','color'),
+    Output('alert_fiyat','children'),
+    Output('alert_fiyat','is_open'),
+    Output('alert_fiyat','color'),
     Input('upload_fiyat' , 'contents'),
+
+)
+
+def upload_msg(fiyat_contents):
+
+    fiyat_isopen = False
+    fiyat_msg = ""
+    fiyat_color = ""
+
+    if fiyat_contents :
+        fiyat_msg , fiyat_color = check_fiyat_upload(fiyat_contents)
+        fiyat_isopen = True
+
+    return fiyat_msg,fiyat_isopen,fiyat_color
+
+
+
+@app.callback(
+
+    Output('alert_paket','children'),
+    Output('alert_paket','is_open'),
+    Output('alert_paket','color'),
     Input('upload_paket' , 'contents'),
-    State('tabs','active_tab')
 
 )
 
 
-def upload_msg(fiyat_contents , paket_contents, tab):
+def upload_msg(paket_contents):
 
-    if fiyat_contents :
-        msg , color = check_upload(fiyat_contents)
-        return msg, True, color
-    elif paket_contents :
-        msg, color = check_upload(paket_contents)
-        return msg, True, color
-    else:
-        raise PreventUpdate
+    paket_isopen = False
+    paket_msg = ""
+    paket_color = ""
+    
+    if paket_contents :
+        paket_msg , paket_color = check_paket_upload(paket_contents)
+        paket_isopen = True
+
+    return paket_msg,paket_isopen,paket_color
 
 
-app.callback(
-    Output("modal-sm", "is_open"),
-    Input("open-sm", "n_clicks"),
-    State("modal-sm", "is_open"),
-)(toggle_modal)
+# app.callback(
+#     Output("modal-sm", "is_open"),
+#     Input("open-sm", "n_clicks"),
+#     State("modal-sm", "is_open"),
+# )(toggle_modal)
 
 @app.callback(
 
@@ -645,9 +672,11 @@ def write_to_excel(nclicks, proje, musteri, teklif, ic, dis, kategori, paket, ga
     name_of_file = musteri + " - " + proje
     wb.save('Outputs/' + name_of_file + '.xlsx')
 
-    return name_of_file + " adlı dosyanız hazır.", {'margin-top': '50px',
-                                                    'margin-left': '15px'}, True, True, 4000, dcc.send_file(
-        'Outputs/' + name_of_file + '.xlsx')
+    return html.Div(name_of_file + " adlı dosyanız hazır.",style={'text-align':'center','height':'auto'}), {'height':'50px', 'margin-top': '40px', 'margin-left': '5px', 'align':'center', 'vertical-align':'center'}, True, True, 4000, dcc.send_file('Outputs/' + name_of_file + '.xlsx')
+
+    # return name_of_file + " adlı dosyanız hazır.", {'margin-top': '50px',
+    #                                                 'margin-left': '15px'}, True, 2000, dcc.send_file(
+    #     'Outputs/' + name_of_file + '.xlsx')
 
 
 @app.callback(
