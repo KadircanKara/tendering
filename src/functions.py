@@ -10,7 +10,6 @@ import dash_bootstrap_components as dbc
 from objects import *
 import os
 
-
 def load_specific_packages(packages:list or str):
 
     if isinstance(packages,list):
@@ -29,7 +28,6 @@ def load_specific_packages(packages:list or str):
         df = pd.read_excel("Sources/Packages.xlsx", sheet_name=packages)
         df.rename(columns={'Unnamed: 1':'Access Cihaz' , 'Unnamed: 3':'Starter Cihaz' , 'Unnamed: 5':'Standard Cihaz' , 'Unnamed: 7':'Full-stack Cihaz'},inplace=True)
         return df
-
 
 def load_fiyat():
     df_fiyat = pd.read_excel("Sources/FiyatListesi.xlsx")
@@ -58,16 +56,8 @@ def load_all_sources():
 
     return df_fiyat, df_packages, wb
 
-
-def toggle_modal(n1, is_open):
-    if n1:
-        return not is_open
-    return is_open
-
-
 def check(file_name):
     return os.path.exists(file_name)
-
 
 def tcmb_data(kur="USD"):
     c_exchange = TA_Handler(
@@ -78,7 +68,6 @@ def tcmb_data(kur="USD"):
     )
     a = round(c_exchange.get_analysis().indicators["high"] + 0.2, 2)
     return str(a).replace('.', ',')
-
 
 def get_adapters(df, cihaz):
     df = df.loc[df['Cihaz Türü'] == cihaz].reset_index(drop=True)
@@ -119,113 +108,121 @@ def every_first_letter_uppercase(string):
             string = string[0:i+1] + string[i+1].upper() + string[i+2:]
 
     return string
-    
 
-def check_upload(contents):
+def check_fiyat_upload(contents):
 
     content_type, content_string = contents.split(',')
     decoded = base64.b64decode(content_string)
     wb = xl.load_workbook(io.BytesIO(decoded))
     sheets = wb.sheetnames
 
+    print(sheets)
+
     color = 'success'
 
-    if len(sheets)==1:
+    success_msg = 'Fiyat Dosyası Yüklendi'
 
-        success_msg = 'Fiyat Dosyası yüklendi !'
+    df_fiyat = pd.read_excel(io.BytesIO(decoded) , sheet_name=sheets[0])
 
-        df_fiyat = pd.read_excel(io.BytesIO(decoded) , sheet_name=sheets[0])
+    headers , fiyat_headers = list(df_fiyat.columns) , ['Cihaz Türü','Adaptör','Para Birimi','Iskontosuz Fiyat','Iskonto']
+    headers_lowercase , fiyat_headers_lowercase = lower_string_list(headers) , lower_string_list(fiyat_headers)
+    print(headers)
 
-        headers , fiyat_headers = list(df_fiyat.columns) , ['Cihaz Türü','Adaptör','Para Birimi','Iskontosuz Fiyat','Iskonto']
-        headers_lowercase , fiyat_headers_lowercase = lower_string_list(headers) , lower_string_list(fiyat_headers)
-        print(headers)
+    faulty_headers = []
+    wrong_data = []
+    wrong_rate_flag = 0
+    wrong_rate = []
+    wrong_number = []
 
-        faulty_headers = []
-        wrong_data = []
-        wrong_rate_flag = 0
-        wrong_rate = []
-        wrong_number = []
+    string_data = headers[0:2]
+    rate_data = headers[2]
+    number_data = headers[3:]
 
-        string_data = headers[0:2]
-        rate_data = headers[2]
-        number_data = headers[3:]
+    msg = ''
+    error_msgs = []
 
-        msg = ''
-        error_msgs = []
+    for header in fiyat_headers_lowercase :
+        if header not in headers_lowercase :
+            faulty_headers.append(header)
 
-        for header in fiyat_headers_lowercase :
-            if header not in headers_lowercase :
-                faulty_headers.append(header)
+    if faulty_headers:
 
-        if faulty_headers:
+        for i in range(len(faulty_headers)):
+            msg += '"' + every_first_letter_uppercase(faulty_headers[i]) + '"' + ' '
+        msg = msg[0:-1] + '. '
+        return 'Bazı sütun(lar) bulunamadı : ' + msg , 'danger'
 
-            for i in range(len(faulty_headers)):
-                msg += '"' + every_first_letter_uppercase(faulty_headers[i]) + '"' + ' '
-            msg = msg[0:-1] + '. '
-            return 'Bazı sütun(lar) bulunamadı : ' + msg , 'danger'
-
-        else:
+    else:
 
 
-            for header in headers:
+        for header in headers:
 
-                print(header.lower() , number_data)
-                
-                data = df_fiyat[header]
-                if header.lower() in lower_string_list(string_data + [rate_data]) :
-                    for i,v in enumerate(data):
-                        if isinstance(v,int) or isinstance(v,float) :
-                            wrong_data.append(header)
-
-                if header.lower() == rate_data.lower():
-                    for i,v in enumerate(data):
-                        if v.upper() not in ['EUR','TL','USD']:
-                            wrong_rate_flag = 1
-                            wrong_rate.append(v.upper())
-
-                if header.lower() in lower_string_list(number_data) and 'unnamed' not in header.lower() :
-                    print(data.dtypes)
-                    if data.dtypes != np.float64 and data.dtypes != np.int64 :
-                        wrong_number.append(header)
-
+            print(header.lower() , number_data)
             
-            if wrong_data :
-                msg += 'Bazı sütun(lar)da yanlış veri tipi tespit edilmiştir : '
-                for header in wrong_data :
-                    msg += f'"{header}" , '
-                msg = msg[0:-3] + '.'
-            
-            elif wrong_rate_flag :
-                msg += '"Para Birimi" sütununda yanlış para birim(leri) tespit edilmiştir : '
-                for rate in list(set(wrong_rate)) :
-                    msg += f'"{rate}" , '
-                msg = msg[0:-3] + '.'
+            data = df_fiyat[header]
+            if header.lower() in lower_string_list(string_data + [rate_data]) :
+                for i,v in enumerate(data):
+                    if isinstance(v,int) or isinstance(v,float) :
+                        wrong_data.append(header)
 
-            if wrong_number:
-                msg += 'Bazı fiyat sütun(lar)ında yanlış veri tipi tespit edilmiştir : '
-                for header in wrong_number :
-                    msg += f'"{header}" , '
-                msg = msg[0:-3] + '.'
+            if header.lower() == rate_data.lower():
+                for i,v in enumerate(data):
+                    if v.upper() not in ['EUR','TL','USD']:
+                        wrong_rate_flag = 1
+                        wrong_rate.append(v.upper())
+
+            if header.lower() in lower_string_list(number_data) and 'unnamed' not in header.lower() :
+                print(data.dtypes)
+                if data.dtypes != np.float64 and data.dtypes != np.int64 :
+                    wrong_number.append(header)
+
+        
+        if wrong_data :
+            msg += 'Bazı sütun(lar)da yanlış veri tipi tespit edilmiştir : '
+            for header in wrong_data :
+                msg += f'"{header}" , '
+            msg = msg[0:-3] + '.'
+        
+        elif wrong_rate_flag :
+            msg += '"Para Birimi" sütununda yanlış para birim(leri) tespit edilmiştir : '
+            for rate in list(set(wrong_rate)) :
+                msg += f'"{rate}" , '
+            msg = msg[0:-3] + '.'
+
+        if wrong_number:
+            msg += 'Bazı fiyat sütun(lar)ında yanlış veri tipi tespit edilmiştir : '
+            for header in wrong_number :
+                msg += f'"{header}" , '
+            msg = msg[0:-3] + '.'
 
 
-            if wrong_data or wrong_rate_flag or wrong_number :
-                msg_list = msg.split('.')
-                for i,v in enumerate(msg_list):
-                    msg_list[i] = html.Div(v)
-                color = 'danger'
-                return msg_list,color
+        if wrong_data or wrong_rate_flag or wrong_number :
+            msg_list = msg.split('.')
+            for i,v in enumerate(msg_list):
+                msg_list[i] = html.Div(v)
+            color = 'danger'
+            return msg_list,color
 
 
-            else :
+        else :
 
-                wb.save('Sources/FiyatListesi.xlsx')
-                # git_push()
-                color = 'success'
-                return success_msg , color
+            wb.save('Sources/FiyatListesi.xlsx')
+            wb.save('static/FiyatListesi.xlsx')
+            color = 'success'
+            return success_msg , color
 
-    elif len(sheets) >= len(packages) :
+def check_paket_upload(contents):
 
-        success_msg = 'Paket Dosyası yüklendi !'
+    content_type, content_string = contents.split(',')
+    decoded = base64.b64decode(content_string)
+    wb = xl.load_workbook(io.BytesIO(decoded))
+    sheets = wb.sheetnames
+
+    if len(sheets) >= len(packages) :
+
+        color = 'success'
+
+        success_msg = 'Paket Dosyası Yüklendi'
 
         missing_sheets = []
 
@@ -251,7 +248,7 @@ def check_upload(contents):
         wrong_data = []
         wrong_number = []
 
-        msg = 'Paket dosyası başarıyla yüklendi.'
+        msg = 'Paket Dosyası Yüklendi'
         color = 'success'
         error_msgs = []
 
@@ -286,7 +283,7 @@ def check_upload(contents):
             for column_data in number_data[category] :
                 if column_data.dtypes == np.dtype(np.object_):
                     wrong_data.append(category)
-    
+
                 for value in column_data :
                     if value <= 0 :
                         wrong_number.append(category)
@@ -339,48 +336,13 @@ def check_upload(contents):
         else :
 
             wb.save('Sources/Packages.xlsx')
-            # git_push()
-
+            wb.save('static/Packages.xlsx')
 
         return msg,color
-
 
     else :
 
         return 'Yüklediğiniz exceldeki sayfa sayısı hatalı. Lütfen kontrol ediniz.', 'danger'
-                
-
-def parse_contents(contents, filename):
-    content_type, content_string = contents.split(',')
-
-    decoded = base64.b64decode(content_string)
-
-    if 'packages' in filename.lower():
-        df_Retail = pd.read_excel(io.BytesIO(decoded), sheet_name='Retail')
-        df_Banking = pd.read_excel(io.BytesIO(decoded), sheet_name='Banking')
-        df_Hospital = pd.read_excel(io.BytesIO(decoded), sheet_name='Hospital')
-        df_Supermarkets = pd.read_excel(io.BytesIO(decoded), sheet_name='Supermarkets')
-        df_Industry = pd.read_excel(io.BytesIO(decoded), sheet_name='Industry')
-
-        return df_Retail, df_Banking, df_Hospital, df_Supermarkets, df_Industry
-
-    elif 'fiyat' in filename.lower():
-        df_fiyat = pd.read_excel(io.BytesIO(decoded))
-
-        return df_fiyat
-
-    else:
-
-        if check('./outputs/sample.xlsx'):
-            xl_source = xl.load_workbook('outputs/sample.xlsx')
-        else:
-            f = open("./outputs/sample.xlsx", "wb")
-            f.write(decoded)
-            f.close()
-            xl_source = xl.load_workbook('outputs/sample.xlsx')
-
-        return xl_source
-
 
 def cihaz_row(cihaz):
     return (
@@ -431,4 +393,3 @@ def cihaz_row(cihaz):
 
         ])
     )
-
