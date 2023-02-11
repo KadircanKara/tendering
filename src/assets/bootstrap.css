@@ -13,6 +13,7 @@
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
  */
 @import url("https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap");
+
 :root {
   --bs-blue: #1ba2f6;
   --bs-indigo: #6610f2;
@@ -11358,3 +11359,39 @@ legend {
 .card .h6 {
   text-shadow: 0 0 1px rgba(255, 255, 255, 0.6), 0 0 3px rgba(255, 255, 255, 0.5), 0 0 0.5rem rgba(255, 255, 255, 0.3), 0 0 2rem rgba(255, 255, 255, 0.2);
 }
+
+.dash-table-container .dash-spreadsheet-container .dash-spreadsheet-inner th {
+  background-clip: padding-box;
+  padding: 2px;
+  overflow-x: hidden;
+  white-space: nowrap;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.dash-table-container .dash-spreadsheet-container .dash-spreadsheet-inner input:not([type=radio]):not([type=checkbox]){
+  color: #44d9e8!important;
+  text-align: center  !important;
+  outline: '1px solid #ea39b8' !important;
+}
+
+.dash-spreadsheet-container .dash-spreadsheet-inner table {
+  border-collapse: collapse;
+  font-family: monospace;
+  text-align: center  !important;
+  --accent: transparent  !important;
+  --border: transparent !important;
+  --text-color: transparent !important;
+  --hover: transparent !important;
+  --background-color-ellipses: transparent !important;
+  --faded-text: transparent !important;
+  --faded-text-header: transparent !important;
+  --selected-background: transparent !important;
+  --faded-dropdown: transparent !important;
+  --muted: transparent !important;
+}
+
+.dash-table-container .dash-spreadsheet-container .dash-spreadsheet-inner td {
+  text-align: center  !important;
+}
+
