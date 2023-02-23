@@ -357,7 +357,7 @@ def cihaz_row(cihaz):
                 dbc.Col(
 
                     dbc.InputGroup(
-                        [dbc.InputGroupText(children=cihaz , style=input_style), dbc.Select(id=cihaz, placeholder="", disabled=True,
+                        [dbc.InputGroupText(children=cihaz , style={'background-color':'transparent','color':'white','width':'40%'}), dbc.Select(id=cihaz, placeholder="", disabled=True,
                                                                )],
                         className="mb-3", size=2
                     ), width=4, style={'margin-left': '55px'}
@@ -374,7 +374,7 @@ def cihaz_row(cihaz):
                 dbc.Col(
 
                     dbc.InputGroup(
-                        [dbc.InputGroupText(children="Ek {}".format(cihaz) , style=input_style), dbc.Select(id='ek_{}'.format(cihaz), placeholder="",
+                        [dbc.InputGroupText(children="Ek {}".format(cihaz) , style={'background-color':'transparent','color':'white','width':'45%'}), dbc.Select(id='ek_{}'.format(cihaz), placeholder="",
                                                                              )],
                         className="mb-3", size=''
                     ), width={'size': 4}
