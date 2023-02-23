@@ -3,14 +3,14 @@ from dash import html
 
 IMAGE = 'assets/1572594055044.png'
 
-input_style={'background-color':'transparent','color':'white', 'width':'21%'}
-small_input_style={'background-color':'transparent','color':'white', 'width':'30%'}
+input_style={'background-color':'transparent','color':'white'}
+small_input_style={'background-color':'transparent','color':'white'}
 select_style={'background-color':'transparent','border-color':'red'}
 
 packages = ['Access', 'Starter', 'Standard', 'Full-stack']
 
 myButton = dbc.Button("Teklif Oluştur", id="submit", n_clicks=0, color='secondary', outline=True, disabled=True,
-                      style={'margin-top': '50px', 'margin-left': '55px', 'width': '7.5vw', 'height':'40px'}
+                      style={'margin-top': '20px', 'margin-left': '55px', 'width': '15vw', 'height':'40px'}
                       )
 
 submit_button = dbc.Button("Login", id="verify", n_clicks=0, outline=True , color='secondary', className="me-1", style={'width':'15%'})
