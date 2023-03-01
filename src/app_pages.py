@@ -94,6 +94,8 @@ login_page = html.Div([
 
 def offer_page() :
 
+    df_fiyat, df_packages, wb = load_all_sources()
+
     layout = html.Div([
                 html.Div([
                     dbc.Navbar(
@@ -142,7 +144,7 @@ def offer_page() :
                     ),
                 ] , style={'width':'100%'}),
 
-            html.Div([
+            dbc.Container([
 
                 dbc.Row([
 
@@ -151,7 +153,7 @@ def offer_page() :
                             html.Div([html.H5("Dolar Kuru", style={'color':'#44d9e8','font-weight':'bold'}) , html.Label(f"{tcmb_data()}₺")],
                             )
                         ] , color='dark' )
-                    ] , style={'color':'white','font-weight':'bold','width':'30.6%','text-align':'center','margin-left':'55px'}, width=1 ),
+                    ] , style={'color':'white','font-weight':'bold','width':'33.3%','text-align':'center'}, width=1 ),
 
 
                     dbc.Col([
@@ -159,7 +161,7 @@ def offer_page() :
                             html.Div([html.H5("Euro Kuru", style={'color':'#44d9e8','font-weight':'bold'}) , html.Label(f"{tcmb_data('EUR')}₺")],
                             )
                         ] , color='dark' )
-                    ] , style={'color':'white','font-weight':'bold','width':'30.6%','text-align':'center'}, width=1 ),
+                    ] , style={'color':'white','font-weight':'bold','width':'33.3%','text-align':'center'}, width=1 ),
 
 
                     dbc.Col([
@@ -167,7 +169,7 @@ def offer_page() :
                             html.Div([html.H5("Sterlin Kuru", style={'color':'#44d9e8','font-weight':'bold'}) , html.Label(f"{tcmb_data('GBP')}₺")],
                             )
                         ] , color='dark' )
-                    ] , style={'color':'white','font-weight':'bold','width':'30.6%','text-align':'center'}, width=1 ),
+                    ] , style={'color':'white','font-weight':'bold','width':'33.3%','text-align':'center'}, width=1 ),
 
                 ], style={'margin-top':'20px'}),
 
@@ -180,15 +182,15 @@ def offer_page() :
                             [dbc.InputGroupText("Proje Adı" , style=input_style),
                                 dbc.Input(id='proje_adi', placeholder="", invalid=True, disabled=False)],
                             className="mb-3",
-                        ), width=4,  style={'margin-left': '45px','width':'31.5%'}),
+                        ), width=4,  style={'width':'33.3%'}),
 
                     dbc.Col(
 
                         dbc.InputGroup(
-                            [dbc.InputGroupText("Müşteri Adı" , style={'background-color':'transparent','color':'white','width':'30%'}),
-                                dbc.Input(id='musteri_adi', placeholder="", invalid=True, disabled=False, style={'margin-left':'5px'})],
+                            [dbc.InputGroupText("Müşteri Adı" , style={'background-color':'transparent','color':'white'}),
+                                dbc.Input(id='musteri_adi', placeholder="", invalid=True, disabled=False, style={'margin-left':'0px'})],
                             className="mb-3", size=2
-                        ), width=4, style={'width':'30.5%'}),
+                        ), width=4, style={'width':'33.3%'}),
 
                     dbc.Col(
 
@@ -196,7 +198,7 @@ def offer_page() :
                             [dbc.InputGroupText("Teklifi Hazırlayan" , style=input_style),
                                 dbc.Input(id='teklifi_hazirlayan', placeholder="", invalid=True, disabled=False)],
                             className="mb-3"#, size=3
-                        ), width=3, style={'width':'30.5%'}),
+                        ), width=3, style={'width':'33.3%'}),
 
                 ], style={'margin-top':'20px'}),
 
@@ -205,7 +207,7 @@ def offer_page() :
                     dbc.Col(
 
                         dbc.InputGroup(
-                            [dbc.InputGroupText("Kategori" , style=input_style),
+                            [dbc.InputGroupText("Kategori" , style={'background-color':'transparent','color':'white','width':'21%'}),
                                 dbc.Select(id='kategori', placeholder="", invalid=False, disabled=False,
                                         options=[
                                             {'label': 'Retail', 'value': 'Retail'},
@@ -214,15 +216,15 @@ def offer_page() :
                                             {'label': 'Supermarkets', 'value': 'Supermarkets'},
                                             {'label': 'Industry', 'value': 'Industry'},
                                             {'label': '-', 'value': '-'}
-                                        ], style={'width':'15%','margin-left':'5px'}
+                                        ], style={}
                                         )],
                             className="mb-3"
-                        ), style={'margin-left': '40px','width':'32%'}, width=4),
+                        ), style={'width':'33.3%'}, width=4),
 
                     dbc.Col(
 
                         dbc.InputGroup(
-                            [dbc.InputGroupText("Paket" , style={'background-color':'transparent','width':'30%'}),
+                            [dbc.InputGroupText("Paket" , style={'background-color':'transparent','width':'25.6%'}),
                                 dbc.Select(id='paket', placeholder="", invalid=False, disabled=False,
                                         options=[
                                             {'label': 'Access', 'value': 'Access'},
@@ -233,7 +235,7 @@ def offer_page() :
                                         ], style={'width':'5%'}
                                         )],
                             className="mb-3"
-                        ), style={'width':'30.5%'}, width=4),
+                        ), style={'width':'33.3%'}, width=4),
 
                     # dbc.Col(
 
@@ -255,28 +257,28 @@ def offer_page() :
                     #     ), width=3, style={'width':'16%'}
                     # )
 
-                ], style={'margin-top':'0px','padding': '5px'}),
+                ], style={'margin-top':'0px'}),
 
                 dbc.Row([
          
                     dbc.Col(
 
                         dbc.InputGroup(
-                            [dbc.InputGroupText("Şehir İçi" , style=small_input_style),
-                                dbc.Input(id='sehir_ici', placeholder="", invalid=True, disabled=False, type='number',style={'width':'15%','margin-left':'10px'},
+                            [dbc.InputGroupText("Şehir İçi" , style={'background-color':'transparent','width':'46%'}),
+                                dbc.Input(id='sehir_ici', placeholder="", invalid=True, disabled=False, type='number',style={'width':'15%','margin-left':'0px'},
                                         step=1, min=0)],
                             className="mb-3",
-                        ), width=3, style={'margin-left':'45px','width':'17%'}
+                        ), width=3, style={'width':'16%'}
                     ),
 
                     dbc.Col(
 
                         dbc.InputGroup(
-                            [dbc.InputGroupText("Şehir Dışı" , style={'background-color':'transparent'}),
-                                dbc.Input(id='sehir_disi', placeholder="", invalid=True, disabled=False, type='number',style={'width':'15%','margin-left':'20px'},
+                            [dbc.InputGroupText("Şehir Dışı" , style={'background-color':'transparent','width':'50%'}),
+                                dbc.Input(id='sehir_disi', placeholder="", invalid=True, disabled=False, type='number',style={'width':'15%','margin-left':'0px'},
                                         step=1, min=0)],
                             className="mb-3",
-                        ), width=4, style={'width':'20%','margin-left':'14.5vw'}
+                        ), width=3, style={'width':'18%','margin-left':'17.3%'}
                     )
 
             ]),
@@ -286,13 +288,13 @@ def offer_page() :
 
                         dbc.Col(
                             dbc.Alert(id='display-selected-package', children='Lütfen kategori-paket seçimi yapınız.', color="primary"),
-                            style={'margin-left': '55px' , 'color':'white'}, width=11
+                            style={'color':'white'}
 
                         ),
 
-                    ], style={'margin-top':'20px','padding': '5px'}),
+                    ], style={'margin-top':'20px'}),
 
-                    dbc.Row(style={'margin-top':'5px','padding': '5px'}),
+                    dbc.Row(style={'margin-top':'5px'}),
 
                     cihaz_row('Gateway'),
                     cihaz_row('Trifaz Analizör'),
@@ -310,7 +312,7 @@ def offer_page() :
 
                     dbc.Row(children=[
 
-                            dbc.Col(myButton, width=1, align='center'), 
+                            dbc.Col(myButton, width=2, align='center'), 
 
                             dbc.Col([
                             dbc.Spinner(id="loading-text",
