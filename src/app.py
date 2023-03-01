@@ -275,6 +275,9 @@ def func(paket, kat):
 
 
 def cihaz_options(device, type):
+  
+    df_fiyat = load_fiyat()[0]
+  
     if type == 'standard':
         id = device
     elif type == 'ek':
