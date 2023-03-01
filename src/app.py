@@ -21,6 +21,38 @@ app.title = 'Faradai Tendering Process'
 
 app.layout = html.Div(id="main" , children=[
 
+# app.layout = dbc.Container(id='main' , children=[
+    
+#         # html.Br(),
+
+#         dbc.Row(
+#             html.Img(src="/assets/faradai_brand.png",style={'width':'50%',"height": "50%",'background-position': 'start'}) , align='start'         
+#         ),
+
+#         dbc.Row(
+#             dbc.FormFloating([
+#                 dbc.Input(type="username", placeholder="username", id='user'),
+#                 dbc.Label("Username")
+#                     ]) , align='center'
+#         ),
+
+#         html.Br(),
+
+#         dbc.Row(
+#             dbc.FormFloating([
+#                 dbc.Input(type="password", placeholder="password", id='passw'),
+#                 dbc.Label("Password")
+#                     ]) , align='center'
+#         ),
+
+#         dbc.Row(submit_button , align='center'),
+
+#         dbc.Row(dcc.Location(id='url' , refresh=False))
+
+#     ], style={"background-image": 'url(/assets/faradai_login_2.jpg)', 'background-repeat': 'no-repeat', 'background-size': '100%','position':'fixed', 'width':'100%', 'verticalAlign':'middle','background-position': 'center', "height": "100%"})
+
+
+
     html.Div([
             html.Div(html.Img(src="/assets/faradai_brand.png" , style={'left-margin':'200px'}) , style={"margin": "auto", 'width': '28.125rem', 'height': '2.813rem', 'padding': '0.625rem',
                                     'margin-top': '4.375rem', 'font-size': '1rem', 'border-width': '0.188rem'}),    
@@ -275,9 +307,9 @@ def func(paket, kat):
 
 
 def cihaz_options(device, type):
-  
+
     df_fiyat = load_fiyat()[0]
-  
+
     if type == 'standard':
         id = device
     elif type == 'ek':
@@ -780,4 +812,4 @@ def required_devices_border(kategori, paket, gateway, trifaz, akim, sicaklik, su
 
 
 if __name__ == "__main__":
-    app.run_server(debug=True)
+    app.run_server(debug=False)
