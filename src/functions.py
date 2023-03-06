@@ -73,8 +73,8 @@ def get_adapters(df, cihaz):
     df = df.loc[df['Cihaz Türü'] == cihaz].reset_index(drop=True)
 
     df_cihaz = pd.DataFrame(df.loc[df['Cihaz Türü'] == cihaz].reset_index(drop=True)['Adaptör'])
-    cihaz_list = df_cihaz['Adaptör'].tolist()
-    cihaz_list.append('-')
+    cihaz_list = ['-'] + df_cihaz['Adaptör'].tolist()
+    # cihaz_list.append('-')
 
     df_birim = pd.DataFrame(df.loc[df['Cihaz Türü'] == cihaz].reset_index(drop=True)['Para Birimi'])
     df_fiyat = pd.DataFrame(df.loc[df['Cihaz Türü'] == cihaz].reset_index(drop=True)['Iskontosuz Fiyat'] * (1 - df.loc[df['Cihaz Türü'] == cihaz].reset_index(drop=True)['Iskonto']))
@@ -357,10 +357,10 @@ def cihaz_row(cihaz):
                 dbc.Col(
 
                     dbc.InputGroup(
-                        [dbc.InputGroupText(children=cihaz , style={'background-color':'transparent','color':'white','width':'40%'}), dbc.Select(id=cihaz, placeholder="", disabled=True,
+                        [dbc.InputGroupText(children=cihaz , style={'background-color':'transparent','color':'white','width':'45%'}), dbc.Select(id=cihaz, placeholder="", disabled=True,
                                                                )],
                         className="mb-3", size=2
-                    ), width=4, style={'margin-left': '55px'}
+                    ), width=4
 
                 ),
 
@@ -374,10 +374,10 @@ def cihaz_row(cihaz):
                 dbc.Col(
 
                     dbc.InputGroup(
-                        [dbc.InputGroupText(children="Ek {}".format(cihaz) , style={'background-color':'transparent','color':'white','width':'45%'}), dbc.Select(id='ek_{}'.format(cihaz), placeholder="",
+                        [dbc.InputGroupText(children="Ek {}".format(cihaz) , style={'background-color':'transparent','color':'white','width':'50%'}), dbc.Select(id='ek_{}'.format(cihaz), placeholder="",
                                                                              )],
                         className="mb-3", size=''
-                    ), width={'size': 4}
+                    ), width={'size':4,'offset':1}
 
                 ),
 
