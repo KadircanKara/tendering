@@ -14,56 +14,7 @@ column_format = [None , FormatTemplate.percentage(2)]
 fiyat_table_columns = [{'id':i, 'name':i, 'color':'red', 'type':column_type[int(i=='Iskontosuz Fiyat' or i=='Iskonto')], 'editable':(i=='Iskontosuz Fiyat' or i=='Iskonto')} for i in df_fiyat.columns]
 package_table_columns = [{'id':i, 'name':i, 'editable':(i in packages)} for i in df_packages['Retail'].columns]
 
-
-
-navbar = html.Div([
-    dbc.Navbar(
-        dbc.Container(
-            [
-                html.A(
-                    dbc.Row(children=[
-                        dbc.Col(html.Img(src='/assets/faradai_logo_nobg.png', height="60px") , align='center'),
-                        dbc.Col(dbc.NavbarBrand("Faradai", className="me-auto",
-                                                style={'color': 'white', 'font-family': 'Sansation', 'left-margin':'35px',
-                                                    'font-size': '2rem'}), align='center'),
-                            ],
-                        align="center",
-                        className="g-0",
-                    ),
-                    #href="/",
-                    style={"textDecoration": "none"},
-                ),
-                dbc.Row(
-                    [
-                        dbc.NavbarToggler(id="navbar-toggler"),
-                        dbc.Collapse(
-                            dbc.Nav(
-                                [
-                                    dbc.NavItem(
-                                        className="me-auto",
-                                    ),
-                                    html.A(dbc.NavItem(dbc.NavLink("Teklif")) , style={"textDecoration": "none"}, href="/Teklif"),
-                                    html.A(dbc.NavItem(dbc.NavLink("Kaynaklar")) , style={"textDecoration": "none"}, href="/Kaynaklar"),
-                                ],
-                                className="w-100",
-                            ),
-                            id="navbar-collapse",
-                            is_open=False,
-                            navbar=True,
-                        ),
-                    ],
-                    className="flex-grow-1",
-                ),
-            ],
-            fluid=True,
-        ),
-        dark=True,
-        color="secondary",
-        sticky='top'
-    ),
-] , style={'width':'100%'}),
-
-login_page = html.Div([
+login_page = html.Div(id='main', children=[
         html.Div(html.Img(src="/assets/faradai_brand.png" , style={'left-margin':'200px'}) , style={"margin": "auto", 'width': '28.125rem', 'height': '2.813rem', 'padding': '0.625rem',
                                   'margin-top': '4.375rem', 'font-size': '1rem', 'border-width': '0.188rem'}),    
         html.Br(),
@@ -85,8 +36,6 @@ login_page = html.Div([
         html.Br(),                                  
         html.Div(submit_button,
                  style={'margin-left': '45%', 'padding-top': '1.88rem'}),
-        html.Div(dcc.Store(id='session', storage_type='session')),
-        html.Div(dcc.Location(id='url' , refresh=False))
         
     ], style={"background-image": 'url(/assets/faradai_login_2.jpg)', 'background-repeat': 'no-repeat', 'background-size': '100%',
               'position':'fixed', 'width':'100%', 'verticalAlign':'middle',
@@ -94,55 +43,55 @@ login_page = html.Div([
 
 def offer_page() :
 
-    df_fiyat, df_packages, wb = load_all_sources()
-
     layout = html.Div([
-                html.Div([
-                    dbc.Navbar(
-                        dbc.Container(
-                            [
-                                html.A(
-                                    dbc.Row(children=[
-                                        dbc.Col(html.Img(src='/assets/faradai_logo_nobg.png', height="60px") , align='center'),
-                                        dbc.Col(dbc.NavbarBrand("Faradai", className="me-auto",
-                                                                style={'color': 'white', 'font-family': 'Sansation', 'left-margin':'35px',
-                                                                    'font-size': '2rem'}), align='center'),
+                # html.Div([
+                #     dbc.Navbar(
+                #         dbc.Container(
+                #             [
+                #                 html.A(
+                #                     dbc.Row(children=[
+                #                         dbc.Col(html.Img(src='/assets/faradai_logo_nobg.png', height="60px") , align='center'),
+                #                         dbc.Col(dbc.NavbarBrand("Faradai", className="me-auto",
+                #                                                 style={'color': 'white', 'font-family': 'Sansation', 'left-margin':'35px',
+                #                                                     'font-size': '2rem'}), align='center'),
 
-                                            ],
-                                        align="center",
-                                        className="g-0",
-                                    ),
-                                    style={"textDecoration": "none"},
-                                ),
-                                dbc.Row(
-                                    [
-                                        dbc.NavbarToggler(id="navbar-toggler"),
-                                        dbc.Collapse(
-                                            dbc.Nav(
-                                                [
-                                                    dbc.NavItem(
-                                                        className="me-auto",
-                                                    ),
-                                                    html.A(dbc.NavItem(dbc.NavLink("Teklif")) , style={"textDecoration": "none"}, href="/Teklif"),
-                                                    html.A(dbc.NavItem(dbc.NavLink("Kaynaklar")) , style={"textDecoration": "none"}, href="/Kaynaklar"),
-                                                ],
-                                                className="w-100",
-                                            ),
-                                            id="navbar-collapse",
-                                            is_open=False,
-                                            navbar=True,
-                                        ),
-                                    ],
-                                    className="flex-grow-1",
-                                ),
-                            ],
-                            fluid=True,
-                        ),
-                        dark=True,
-                        color="secondary",
-                        sticky='top'
-                    ),
-                ] , style={'width':'100%'}),
+                #                             ],
+                #                         align="center",
+                #                         className="g-0",
+                #                     ),
+                #                     style={"textDecoration": "none"},
+                #                 ),
+                #                 dbc.Row(
+                #                     [
+                #                         dbc.NavbarToggler(id="navbar-toggler"),
+                #                         dbc.Collapse(
+                #                             dbc.Nav(
+                #                                 [
+                #                                     dbc.NavItem(
+                #                                         className="me-auto",
+                #                                     ),
+                #                                     html.A(dbc.NavItem(dbc.NavLink("Teklif")) , style={"textDecoration": "none"}, href="/Teklif"),
+                #                                     html.A(dbc.NavItem(dbc.NavLink("Kaynaklar")) , style={"textDecoration": "none"}, href="/Kaynaklar"),
+                #                                 ],
+                #                                 className="w-100",
+                #                             ),
+                #                             id="navbar-collapse",
+                #                             is_open=False,
+                #                             navbar=True,
+                #                         ),
+                #                     ],
+                #                     className="flex-grow-1",
+                #                 ),
+                #             ],
+                #             fluid=True,
+                #         ),
+                #         dark=True,
+                #         color="secondary",
+                #         sticky='top'
+                #     ),
+                # ] , style={'width':'100%'}),
+
+            
 
             dbc.Container([
 
@@ -207,7 +156,7 @@ def offer_page() :
                     dbc.Col(
 
                         dbc.InputGroup(
-                            [dbc.InputGroupText("Kategori" , style={'background-color':'transparent','color':'white','width':'21%'}),
+                            [dbc.InputGroupText("Kategori" , style={'background-color':'transparent','color':'white','width':'24.5%'}),
                                 dbc.Select(id='kategori', placeholder="", invalid=False, disabled=False,
                                         options=[
                                             {'label': 'Retail', 'value': 'Retail'},
@@ -224,7 +173,7 @@ def offer_page() :
                     dbc.Col(
 
                         dbc.InputGroup(
-                            [dbc.InputGroupText("Paket" , style={'background-color':'transparent','width':'25.6%'}),
+                            [dbc.InputGroupText("Paket" , style={'background-color':'transparent','width':'105px'}),
                                 dbc.Select(id='paket', placeholder="", invalid=False, disabled=False,
                                         options=[
                                             {'label': 'Access', 'value': 'Access'},
@@ -264,21 +213,21 @@ def offer_page() :
                     dbc.Col(
 
                         dbc.InputGroup(
-                            [dbc.InputGroupText("Şehir İçi" , style={'background-color':'transparent','width':'46%'}),
-                                dbc.Input(id='sehir_ici', placeholder="", invalid=True, disabled=False, type='number',style={'width':'15%','margin-left':'0px'},
+                            [dbc.InputGroupText("Şehir İçi" , style={'background-color':'transparent','width':'86px'}),
+                                dbc.Input(id='sehir_ici', placeholder="", invalid=True, disabled=False, type='number',style={'width':'120px','margin-left':'0px'},
                                         step=1, min=0)],
                             className="mb-3",
-                        ), width=3, style={'width':'16%'}
+                        ), width=6, style={'width':'240px'}
                     ),
 
                     dbc.Col(
 
                         dbc.InputGroup(
-                            [dbc.InputGroupText("Şehir Dışı" , style={'background-color':'transparent','width':'50%'}),
-                                dbc.Input(id='sehir_disi', placeholder="", invalid=True, disabled=False, type='number',style={'width':'15%','margin-left':'0px'},
+                            [dbc.InputGroupText("Şehir Dışı" , style={'background-color':'transparent','width':'110px'}),
+                                dbc.Input(id='sehir_disi', placeholder="", invalid=True, disabled=False, type='number',style={'width':'120px','margin-left':'0px'},
                                         step=1, min=0)],
                             className="mb-3",
-                        ), width=3, style={'width':'18%','margin-left':'17.3%'}
+                        ), width=6, style={'width':'260px','margin-left':'140px'}
                     )
 
             ]),
@@ -351,9 +300,9 @@ def resources_page():
     
      return ( html.Div([
 
-        html.Div(children=navbar),
+        # html.Div(children=navbar),
 
-        html.Br(),
+        # html.Br(),
 
         dbc.Container([
 
