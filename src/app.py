@@ -19,69 +19,8 @@ server = app.server
 
 app.title = 'Faradai Tendering Process'
 
-app.layout = html.Div(id="main" , children=[
+app.layout = login_page
 
-# app.layout = dbc.Container(id='main' , children=[
-    
-#         # html.Br(),
-
-#         dbc.Row(
-#             html.Img(src="/assets/faradai_brand.png",style={'width':'50%',"height": "50%",'background-position': 'start'}) , align='start'         
-#         ),
-
-#         dbc.Row(
-#             dbc.FormFloating([
-#                 dbc.Input(type="username", placeholder="username", id='user'),
-#                 dbc.Label("Username")
-#                     ]) , align='center'
-#         ),
-
-#         html.Br(),
-
-#         dbc.Row(
-#             dbc.FormFloating([
-#                 dbc.Input(type="password", placeholder="password", id='passw'),
-#                 dbc.Label("Password")
-#                     ]) , align='center'
-#         ),
-
-#         dbc.Row(submit_button , align='center'),
-
-#         dbc.Row(dcc.Location(id='url' , refresh=False))
-
-#     ], style={"background-image": 'url(/assets/faradai_login_2.jpg)', 'background-repeat': 'no-repeat', 'background-size': '100%','position':'fixed', 'width':'100%', 'verticalAlign':'middle','background-position': 'center', "height": "100%"})
-
-
-
-    html.Div([
-            html.Div(html.Img(src="/assets/faradai_brand.png" , style={'left-margin':'200px'}) , style={"margin": "auto", 'width': '28.125rem', 'height': '2.813rem', 'padding': '0.625rem',
-                                    'margin-top': '4.375rem', 'font-size': '1rem', 'border-width': '0.188rem'}),    
-            html.Br(),
-            html.Br(),
-            html.Br(),
-            html.Div(dbc.FormFloating([
-                            dbc.Input(type="username", placeholder="username", id='user'),
-                            dbc.Label("Username")
-                                ],
-                            style={"margin": "auto", 'width': '28.125rem', 'height': '2.813rem', 'padding': '0.625rem',
-                                    'margin-top': '4.375rem', 'font-size': '1rem', 'border-width': '0.188rem'})),
-            html.Br(),
-            html.Div(dbc.FormFloating([
-                            dbc.Input(type="password", placeholder="password", id='passw'),
-                            dbc.Label("Password")
-                                ],
-                            style={"margin": "auto", 'width': '28.125rem', 'height': '2.813rem', 'padding': '0.625rem',
-                                    'margin-top': '0.625rem', 'font-size': '1rem', 'border-width': '0.188rem'})),
-            html.Br(),                                  
-            html.Div(submit_button,
-                    style={'margin-left': '45%', 'padding-top': '1.88rem'}),
-            html.Div(dcc.Store(id='session', data=[0], storage_type='session')),
-            html.Div(dcc.Location(id='url' , refresh=False))
-        ], style={"background-image": 'url(/assets/faradai_login_2.jpg)', 'background-repeat': 'no-repeat', 'background-size': '100%',
-                'position':'fixed', 'width':'100%', 'verticalAlign':'middle',
-                'background-position': 'center', "height": "100%"}) # 56.25rem
-
-] , style={"width": "100%", "height": "56.25rem"})
 
 @app.callback(
 
@@ -240,37 +179,31 @@ def upload_msg(paket_contents):
     return paket_msg,paket_isopen,paket_color
 
 
-# app.callback(
-#     Output("modal-sm", "is_open"),
-#     Input("open-sm", "n_clicks"),
-#     State("modal-sm", "is_open"),
-# )(toggle_modal)
-
 @app.callback(
 
     Output('main','children'),
+    Output('main','style'),
     Input('verify','n_clicks'),
     State('user','value'),
     State('passw','value'),
-    State('url','pathname')
 
 )
 
-def show_page(nclicks,user,passw,url):
+def show_page(nclicks,user,passw):
 
-    if url=='/Teklif' or url=='/':
         if nclicks > 0 and user=='reengen' and passw=='rngn2021!':
             
-            return offer_page()
+            return dbc.Tabs(
+                    [
+                        dbc.Tab(offer_page(), label="Teklif Oluşturma Sayfası", tab_id='teklif', activeTabClassName="fw-bold fst-italic"),
+                        dbc.Tab(resources_page(), label="Fiyat & Paket Güncelleme Sayfası", tab_id='kaynak', activeTabClassName="fw-bold fst-italic"),
+                    ], id='page_content', active_tab='teklif'
+                ) , {}
+        
         else:
-            return login_page
+            raise PreventUpdate
 
-    elif url=='/Kaynaklar':
-        if nclicks > 0 and user=='reengen' and passw=='rngn2021!':
-            
-            return resources_page()
-        else:
-            return login_page
+
 
 @app.callback(
     Output("display-selected-package", "style"),
@@ -284,15 +217,13 @@ def func(paket, kat):
 
     if paket is not None and paket != '-' and kat is not None and kat != '-':
 
-        fiyat, df = df_fiyat, df_packages[kat]
+        df = df_packages[kat]
 
         df = df[[paket, '{} Cihaz'.format(paket)]]
         df.dropna(inplace=True)
         df.reset_index(inplace=True)
 
         df.dropna(inplace=True)
-
-        df_device_and_count = df
 
         contents = '{} - {}  : '.format(kat, paket)
 
@@ -308,8 +239,6 @@ def func(paket, kat):
 
 def cihaz_options(device, type):
 
-    df_fiyat = load_fiyat()[0]
-
     if type == 'standard':
         id = device
     elif type == 'ek':
@@ -317,16 +246,26 @@ def cihaz_options(device, type):
 
     @app.callback(
         Output(id, "options"),
+
         Input("paket", "value"),
         Input("kategori", "value"),
-
+        Input("page_content","active_tab"),
         prevent_initial_call=False,
     )
-    def func(paket, kat):
 
-            df, df_cihaz_list = get_adapters(df_fiyat, device)
-            options = [{'label': i, 'value': i} for i in df_cihaz_list['cihaz'].unique()]
-            return options
+    def func(paket, kat, page_tab):
+            
+            if page_tab == 'teklif':
+
+                df_fiyat = load_fiyat()[0]
+
+                df_cihaz_list = get_adapters(df_fiyat, device)[1]
+                options = [{'label': i, 'value': i} for i in df_cihaz_list['cihaz'].unique()]
+
+                return options
+            
+            else :
+                raise PreventUpdate
 
 
 cihaz_options('Gateway', 'standard')
@@ -708,10 +647,6 @@ def write_to_excel(nclicks, proje, musteri, teklif, ic, dis, kategori, paket, ga
     wb.save('Outputs/' + name_of_file + '.xlsx')
 
     return html.Div(name_of_file + " adlı dosyanız hazır.",style={'text-align':'center','height':'auto'}), {'height':'50px', 'margin-top': '40px', 'margin-left': '5px', 'align':'center', 'vertical-align':'center'}, True, True, 4000, dcc.send_file('Outputs/' + name_of_file + '.xlsx')
-
-    # return name_of_file + " adlı dosyanız hazır.", {'margin-top': '50px',
-    #                                                 'margin-left': '15px'}, True, 2000, dcc.send_file(
-    #     'Outputs/' + name_of_file + '.xlsx')
 
 
 @app.callback(
