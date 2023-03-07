@@ -760,4 +760,4 @@ def required_devices_border(kategori, paket, gateway, trifaz, akim, sicaklik, su
 
 
 if __name__ == "__main__":
-    app.run_server(debug=True)
+    app.run_server(debug=False)
