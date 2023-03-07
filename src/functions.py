@@ -351,9 +351,6 @@ def cihaz_row(cihaz):
 
             dbc.Row(children=[
 
-                # dbc.Col( dbc.Label(children=cihaz , style=input_style), width=2 ),
-                # dbc.Col( dbc.Select(id=cihaz, placeholder="", disabled=True), width=2),
-
                 dbc.Col(
 
                     dbc.InputGroup(
@@ -365,11 +362,8 @@ def cihaz_row(cihaz):
                 ),
 
                 dbc.Col(
-                    dbc.Input(id='{}_num'.format(cihaz), type='number', placeholder='Adet', min=0, step=1, style=small_input_style), width=1
+                    dbc.Input(id='{}_num'.format(cihaz), type='number', placeholder='Adt', min=0, step=1, style=small_input_style), width=1
                 ),
-
-                # dbc.Col( dbc.Label(children="Ek {}".format(cihaz) , style=input_style), width=2 ),
-                # dbc.Col( dbc.Select(id='ek_{}'.format(cihaz), placeholder=""), width=2 ),
 
                 dbc.Col(
 
