@@ -9,7 +9,7 @@ select_style={'background-color':'transparent','border-color':'red'}
 
 packages = ['Access', 'Starter', 'Standard', 'Full-stack']
 
-myButton = dbc.Button("Teklif Oluştur", id="submit", n_clicks=0, color='secondary', outline=True, disabled=True)
+myButton = dbc.Button("Teklif Oluştur", id="submit", n_clicks=0, color='secondary', outline=True, disabled=True, style={'height':'2.5rem'})
 
 submit_button = dbc.Button("Login", id="verify", n_clicks=0, outline=True , color='secondary', className="me-1", style={'width':'15%'})
 
@@ -19,7 +19,7 @@ old_submit_button = dbc.Button("Giriş", id="verify", n_clicks=0,
 
 
 uploadStyle = {
-    'width': '95%',
+    'width': '90%',
     'height': '60px',
     'lineHeight': '60px',
     'borderWidth': '2px',
@@ -30,7 +30,8 @@ uploadStyle = {
     'backgroundColor': 'rgba(0, 255, 0, 0.1)',
     'textAlign': 'center',
     'margin': '10px',
-    'margin-left': '20px'
+    'margin-left': '20px',
+    'size':'50%'
 }
 
 uploadStyle_green = {
