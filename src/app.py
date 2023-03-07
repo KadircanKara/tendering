@@ -193,12 +193,26 @@ def show_page(nclicks,user,passw):
 
         if nclicks > 0 and user=='reengen' and passw=='rngn2021!':
             
-            return dbc.Tabs(
+            return (
+                dbc.Container([
+                    dbc.Row([
+                        dbc.Col(html.Img(src='/assets/faradai_logo_nobg.png', height="60px"), width=1),
+                        dbc.Col(html.H1('Faradai Tekliflendirme Modulü'), align='center', style={'color':'white'}, width=6)
+                        ], align='center', justify='center', style={'align':'center','margin-top':'1rem'}
+                    )
+                ]),
+
+                    html.Hr(),
+
+                #dbc.Container([
+                    html.Div(dbc.Tabs(
                     [
-                        dbc.Tab(offer_page(), label="Teklif Oluşturma Sayfası", tab_id='teklif', activeTabClassName="fw-bold fst-italic"),
-                        dbc.Tab(resources_page(), label="Fiyat & Paket Güncelleme Sayfası", tab_id='kaynak', activeTabClassName="fw-bold fst-italic"),
-                    ], id='page_content', active_tab='teklif'
-                ) , {}
+                        dbc.Tab(offer_page(), label="Teklif Oluşturma Sayfası", tab_id='teklif', activeTabClassName="fw-bold fst-italic", tab_style={"margin": "auto"}),
+                        dbc.Tab(resources_page(), label="Fiyat & Paket Güncelleme Sayfası", tab_id='kaynak', activeTabClassName="fw-bold fst-italic", tab_style={"margin": "auto"}),
+                    ], id='page_content', active_tab='teklif', style={'width':'100%','margin':'auto'}
+                ), style={'margin':'auto'})
+            #])
+    ) , {}
         
         else:
             raise PreventUpdate
@@ -411,7 +425,6 @@ def enable_button(proje, musteri, teklif, ic, dis):
 @app.callback(
 
     Output("Output-Status", "children"),
-    Output("Output-Status", "style"),
     Output("Output-Status", "dismissable"),
     Output("Output-Status", "is_open"),
     Output("Output-Status", "duration"),
@@ -646,7 +659,7 @@ def write_to_excel(nclicks, proje, musteri, teklif, ic, dis, kategori, paket, ga
     name_of_file = musteri + " - " + proje
     wb.save('Outputs/' + name_of_file + '.xlsx')
 
-    return html.Div(name_of_file + " adlı dosyanız hazır.",style={'text-align':'center','height':'auto'}), {'height':'50px', 'margin-top': '40px', 'margin-left': '5px', 'align':'center', 'vertical-align':'center'}, True, True, 4000, dcc.send_file('Outputs/' + name_of_file + '.xlsx')
+    return html.Div(name_of_file + " adlı dosyanız hazır.",style={'text-align':'center','height':'auto'}), True, True, 4000, dcc.send_file('Outputs/' + name_of_file + '.xlsx')
 
 
 @app.callback(
@@ -747,4 +760,4 @@ def required_devices_border(kategori, paket, gateway, trifaz, akim, sicaklik, su
 
 
 if __name__ == "__main__":
-    app.run_server(debug=False)
+    app.run_server(debug=True)
