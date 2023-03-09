@@ -207,8 +207,8 @@ def show_page(nclicks,user,passw):
                 #dbc.Container([
                     html.Div(dbc.Tabs(
                     [
-                        dbc.Tab(offer_page(), label="Teklif Oluşturma Sayfası", tab_id='teklif', activeTabClassName="fw-bold fst-italic", tab_style={"margin": "auto"}),
-                        dbc.Tab(resources_page(), label="Fiyat & Paket Güncelleme Sayfası", tab_id='kaynak', activeTabClassName="fw-bold fst-italic", tab_style={"margin": "auto"}),
+                        dbc.Tab(offer_page(), label="Teklif Oluşturma Sayfası", tab_id='teklif', activeTabClassName="fw-bold fst-italic", tab_style={"margin": "auto"}, active_label_style={'backgroundColor':'transparent'}),
+                        dbc.Tab(resources_page(), label="Fiyat & Paket Güncelleme Sayfası", tab_id='kaynak', activeTabClassName="fw-bold fst-italic", tab_style={"margin": "auto"}, active_label_style={'backgroundColor':'transparent'}),
                     ], id='page_content', active_tab='teklif', style={'width':'100%','margin':'auto'}
                 ), style={'margin':'auto'})
             #])
@@ -690,6 +690,19 @@ def write_to_excel(nclicks, proje, musteri, teklif, ic, dis, kategori, paket, ga
     Output('Pulse Okuyucu', 'value'),
     Output('UPS', 'value'),
 
+    Output('ek_Gateway', 'value'),
+    Output('ek_Trifaz Analizör', 'value'),
+    Output('ek_Akım Trafosu', 'value'),
+    Output('ek_Sıcaklık Sensörü', 'value'),
+    Output('ek_Su Sayacı', 'value'),
+    Output('ek_Akıllı Klima Kontrol', 'value'),
+    Output('ek_Modbus Converter', 'value'),
+    Output('ek_Güç Kaynağı', 'value'),
+    Output('ek_Jeneratör Kartı', 'value'),
+    Output('ek_Monofaz Analizör', 'value'),
+    Output('ek_Pulse Okuyucu', 'value'),
+    Output('ek_UPS', 'value'),
+
     Input("kategori", "value"),
     Input("paket", "value"),
     Input('Gateway', 'value'),
@@ -705,17 +718,15 @@ def write_to_excel(nclicks, proje, musteri, teklif, ic, dis, kategori, paket, ga
     Input('Pulse Okuyucu', 'value'),
     Input('UPS', 'value'),
 
+    Input('page_content','active_tab'),
+
     prevent_initial_call=False
 
 )
 def required_devices_border(kategori, paket, gateway, trifaz, akim, sicaklik, su, klima, modbus, guc, jenerator,
-                            monofaz, pulse, ups):
-    all_contents = []
-    filenames = []
-    parsed_contents = []
+                            monofaz, pulse, ups, page_tab):
 
     all_inputs = [gateway, trifaz, akim, sicaklik, su, klima, modbus, guc, jenerator, monofaz, pulse, ups]
-    required_inputs = []
 
     DISABLED = [True] * len(all_inputs)
     VALUE = all_inputs
@@ -723,41 +734,46 @@ def required_devices_border(kategori, paket, gateway, trifaz, akim, sicaklik, su
     DISABLED = [True] * len(all_inputs)
     VALUE = all_inputs
 
-    if (kategori is not None and kategori != '-') and (paket is not None and paket != '-'):
+    if page_tab == 'kaynak':
+        return [dash.no_update]*len(all_inputs) + [None]*(2*len(all_inputs))
+    
+    else :
 
-        df = df_packages[kategori]
+        if (kategori is not None and kategori != '-') and (paket is not None and paket != '-'):
 
-        df = df[[paket, '{} Cihaz'.format(paket)]]
-        df.dropna(inplace=True)
-        df.reset_index(drop=True)
+            df = df_packages[kategori]
 
-        df.dropna(inplace=True)
+            df = df[[paket, '{} Cihaz'.format(paket)]]
+            df.dropna(inplace=True)
+            df.reset_index(drop=True)
 
-        tum_cihazlar = ['Gateway', 'Trifaz', 'Akım Trafosu', 'Sıcaklık Sensörü', 'Su Sayacı', 'Akıllı Klima Kontrol',
-                        'Modbus Converter',
-                        'Güç Kaynağı', 'Jeneratör Kartı', 'Monofaz Analizör', 'Pulse Okuyucu', 'UPS']
-        
-        if kategori == '-' or paket == '-':
-            gereken_cihazlar = tum_cihazlar
-        else:
-            gereken_cihazlar = df.loc[df['{} Cihaz'.format(paket)] != "Kurulum"]['{} Cihaz'.format(paket)].unique().tolist()
+            df.dropna(inplace=True)
 
-        girilen_cihazlar = [gateway, trifaz, akim, sicaklik, su, klima, modbus, guc, jenerator, monofaz, pulse, ups]
-
-        for i in range(len(tum_cihazlar)):
-            if tum_cihazlar[i] in gereken_cihazlar:
-                DISABLED[i] = False
+            tum_cihazlar = ['Gateway', 'Trifaz', 'Akım Trafosu', 'Sıcaklık Sensörü', 'Su Sayacı', 'Akıllı Klima Kontrol',
+                            'Modbus Converter',
+                            'Güç Kaynağı', 'Jeneratör Kartı', 'Monofaz Analizör', 'Pulse Okuyucu', 'UPS']
+            
+            if kategori == '-' or paket == '-':
+                gereken_cihazlar = tum_cihazlar
             else:
-                VALUE[i] = None
+                gereken_cihazlar = df.loc[df['{} Cihaz'.format(paket)] != "Kurulum"]['{} Cihaz'.format(paket)].unique().tolist()
 
-        return DISABLED + VALUE
+            girilen_cihazlar = [gateway, trifaz, akim, sicaklik, su, klima, modbus, guc, jenerator, monofaz, pulse, ups]
+
+            for i in range(len(tum_cihazlar)):
+                if tum_cihazlar[i] in gereken_cihazlar:
+                    DISABLED[i] = False
+                else:
+                    VALUE[i] = None
+
+            return DISABLED + VALUE + [dash.no_update]*len(all_inputs)
 
 
-    else:
+        else:
 
-        DISABLED = [False] * len(all_inputs)
-        return DISABLED + VALUE
+            DISABLED = [False] * len(all_inputs)
+            return DISABLED + VALUE + [dash.no_update]*len(all_inputs)
 
 
 if __name__ == "__main__":
-    app.run_server(debug=False)
+    app.run_server(debug=True)
