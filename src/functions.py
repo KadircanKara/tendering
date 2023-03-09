@@ -70,14 +70,18 @@ def tcmb_data(kur="USD"):
     return str(a).replace('.', ',')
 
 def get_adapters(df, cihaz):
-    df = df.loc[df['Cihaz Türü'] == cihaz].reset_index(drop=True)
+    #df = df.loc[df['Cihaz Türü'] == cihaz].reset_index(drop=True)
+    df = df[df['Cihaz Türü'].str.contains(cihaz)].reset_index(drop=True)
 
-    df_cihaz = pd.DataFrame(df.loc[df['Cihaz Türü'] == cihaz].reset_index(drop=True)['Adaptör'])
+    # df_cihaz = pd.DataFrame(df.loc[df['Cihaz Türü'] == cihaz].reset_index(drop=True)['Adaptör'])
+    df_cihaz = pd.DataFrame(df[df['Cihaz Türü'].str.contains(cihaz)].reset_index(drop=True)['Adaptör'])
     cihaz_list = ['-'] + df_cihaz['Adaptör'].tolist()
     # cihaz_list.append('-')
 
-    df_birim = pd.DataFrame(df.loc[df['Cihaz Türü'] == cihaz].reset_index(drop=True)['Para Birimi'])
-    df_fiyat = pd.DataFrame(df.loc[df['Cihaz Türü'] == cihaz].reset_index(drop=True)['Iskontosuz Fiyat'] * (1 - df.loc[df['Cihaz Türü'] == cihaz].reset_index(drop=True)['Iskonto']))
+    # df_birim = pd.DataFrame(df.loc[df['Cihaz Türü'] == cihaz].reset_index(drop=True)['Para Birimi'])
+    df_birim = pd.DataFrame(df[df['Cihaz Türü'].str.contains(cihaz)].reset_index(drop=True)['Para Birimi'])
+    # df_fiyat = pd.DataFrame(df.loc[df['Cihaz Türü'] == cihaz].reset_index(drop=True)['Iskontosuz Fiyat'] * (1 - df.loc[df['Cihaz Türü'] == cihaz].reset_index(drop=True)['Iskonto']))
+    df_fiyat = pd.DataFrame(df[df['Cihaz Türü'].str.contains(cihaz)].reset_index(drop=True)['Iskontosuz Fiyat'] * (1 - df[df['Cihaz Türü'].str.contains(cihaz)].reset_index(drop=True)['Iskonto']))
 
     df = pd.concat([df_cihaz, df_fiyat, df_birim], axis=1)
 
@@ -350,40 +354,38 @@ def cihaz_row(cihaz):
         html.Div(children=[
 
             dbc.Row(children=[
-
+        
                 dbc.Col(
-
-                    dbc.InputGroup(
-                        [dbc.InputGroupText(children=cihaz , style={'background-color':'transparent','color':'white','width':'45%'}), dbc.Select(id=cihaz, placeholder="", disabled=True,
-                                                               )],
-                        className="mb-3", size=2
-                    ), width=4
-
+                    html.Label(cihaz, style=input_style), align='center', width=2
                 ),
 
                 dbc.Col(
-                    dbc.Input(id='{}_num'.format(cihaz), type='number', placeholder='Adt', min=0, step=1, style=small_input_style), width=1
+                    dbc.Select(id=cihaz, placeholder="", disabled=True), align='center', width=2
                 ),
 
                 dbc.Col(
-
-                    dbc.InputGroup(
-                        [dbc.InputGroupText(children="Ek {}".format(cihaz) , style={'background-color':'transparent','color':'white','width':'50%'}), dbc.Select(id='ek_{}'.format(cihaz), placeholder="",
-                                                                             )],
-                        className="mb-3", size=''
-                    ), width={'size':4,'offset':1}
-
+                    dbc.Input(id='{}_num'.format(cihaz), type='number', placeholder='Adet', min=0, step=1, style=small_input_style), align='center', width=1
                 ),
 
                 dbc.Col(
-                    dbc.Input(id='ek_{}_ic'.format(cihaz), type='number', placeholder='İç', min=0, step=1 , style=small_input_style), width=1
+                    html.Label("Ek {}".format(cihaz), style=input_style), align='center', width={'size':2,'offset':1}
                 ),
 
                 dbc.Col(
-                    dbc.Input(id='ek_{}_dis'.format(cihaz), type='number', placeholder='Dış', min=0, step=1 , style=small_input_style), width=1
+                    dbc.Select(id='ek_{}'.format(cihaz), placeholder=""), align='center', width=2
                 ),
 
+                dbc.Col(
+                    dbc.Input(id='ek_{}_ic'.format(cihaz), type='number', placeholder='İç', min=0, step=1 , style=small_input_style), align='center', width=1
+                ),
+
+                dbc.Col(
+                    dbc.Input(id='ek_{}_dis'.format(cihaz), type='number', placeholder='Dış', min=0, step=1 , style=small_input_style), align='center', width=1
+                ),
+        
             ]),
+
+            html.Br(),
 
         ])
     )
