@@ -637,20 +637,20 @@ def write_to_excel(nclicks, proje, musteri, teklif, ic, dis, kategori, paket, ga
         ws['G33'] = df_fiyat.loc[df_fiyat['Adaptör'] == 'Paket Kurulum (Şehir içi)']['Iskontosuz Fiyat'].values[0] * (1 - df_fiyat.loc[df_fiyat['Adaptör'] == 'Paket Kurulum (Şehir içi)']['Iskonto'].values[0])
         ws['E33'] = ic
         ws['F33'] = df_fiyat.loc[df_fiyat['Adaptör'] == 'Paket Kurulum (Şehir içi)']['Para Birimi'].values[0]
-        ws['B35'] = 'Cihaz Başı Kurulum (Şehir içi)'
-        ws['G35'] = df_fiyat.loc[df_fiyat['Adaptör'] == 'Cihaz Başı Kurulum (Şehir içi)']['Iskontosuz Fiyat'].values[0] * (1 - df_fiyat.loc[df_fiyat['Adaptör'] == 'Cihaz Başı Kurulum (Şehir içi)']['Iskonto'].values[0])
-        ws['E35'] = "={}+(SUM(E17:E26)*{})".format(ek_donanim_ic_toplam, ic)
-        ws['F35'] = df_fiyat.loc[df_fiyat['Adaptör'] == 'Cihaz Başı Kurulum (Şehir içi)']['Para Birimi'].values[0]
+#         ws['B35'] = 'Cihaz Başı Kurulum (Şehir içi)'
+#         ws['G35'] = df_fiyat.loc[df_fiyat['Adaptör'] == 'Cihaz Başı Kurulum (Şehir içi)']['Iskontosuz Fiyat'].values[0] * (1 - df_fiyat.loc[df_fiyat['Adaptör'] == 'Cihaz Başı Kurulum (Şehir içi)']['Iskonto'].values[0])
+#         ws['E35'] = "={}+(SUM(E17:E26)*{})".format(ek_donanim_ic_toplam, ic)
+#         ws['F35'] = df_fiyat.loc[df_fiyat['Adaptör'] == 'Cihaz Başı Kurulum (Şehir içi)']['Para Birimi'].values[0]
 
     if dis is not None or dis != 0:
         ws['B34'] = 'Paket Kurulum (Şehir Dışı)'
         ws['G34'] = df_fiyat.loc[df_fiyat['Adaptör'] == 'Paket Kurulum (Şehir dışı)']['Iskontosuz Fiyat'].values[0] * (1 - df_fiyat.loc[df_fiyat['Adaptör'] == 'Paket Kurulum (Şehir dışı)']['Iskonto'].values[0])
         ws['E34'] = dis
         ws['F34'] = df_fiyat.loc[df_fiyat['Adaptör'] == 'Paket Kurulum (Şehir dışı)']['Para Birimi'].values[0]
-        ws['B36'] = 'Cihaz Başı Kurulum (Şehir dışı)'
-        ws['G36'] = df_fiyat.loc[df_fiyat['Adaptör'] == 'Cihaz Başı Kurulum (Şehir dışı)']['Iskontosuz Fiyat'].values[0] * (1 - df_fiyat.loc[df_fiyat['Adaptör'] == 'Cihaz Başı Kurulum (Şehir dışı)']['Iskonto'].values[0])
-        ws['E36'] = "={}+(SUM(E17:E26)*{})".format(ek_donanim_dis_toplam, dis)
-        ws['F36'] = df_fiyat.loc[df_fiyat['Adaptör'] == 'Cihaz Başı Kurulum (Şehir dışı)']['Para Birimi'].values[0]
+#         ws['B36'] = 'Cihaz Başı Kurulum (Şehir dışı)'
+#         ws['G36'] = df_fiyat.loc[df_fiyat['Adaptör'] == 'Cihaz Başı Kurulum (Şehir dışı)']['Iskontosuz Fiyat'].values[0] * (1 - df_fiyat.loc[df_fiyat['Adaptör'] == 'Cihaz Başı Kurulum (Şehir dışı)']['Iskonto'].values[0])
+#         ws['E36'] = "={}+(SUM(E17:E26)*{})".format(ek_donanim_dis_toplam, dis)
+#         ws['F36'] = df_fiyat.loc[df_fiyat['Adaptör'] == 'Cihaz Başı Kurulum (Şehir dışı)']['Para Birimi'].values[0]
 
     ws['F33'].alignment = Alignment(horizontal='center')
     ws['F34'].alignment = Alignment(horizontal='center')
