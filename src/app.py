@@ -590,10 +590,10 @@ def write_to_excel(nclicks, proje, musteri, teklif, ic, dis, kategori, paket, ga
                 df.reset_index(inplace=True)
                 df.dropna(inplace=True)
                 df_kurulumsuz = df[df['{} Cihaz'.format(paket)].str.contains("Kurulum") == False]
-                ws['E{}'.format(i + 15)] = df_kurulumsuz.loc[df_kurulumsuz['{} Cihaz'.format(paket)] == cihaz][paket].sum()
+                ws['E{}'.format(i + 15)] = df_kurulumsuz.loc[df_kurulumsuz['{} Cihaz'.format(paket)] == cihaz][paket].sum() * (ic+dis)
             else:
                 if donanimlar_adet[i] is not None:
-                    ws['E{}'.format(i + 15)] = donanimlar_adet[i]
+                    ws['E{}'.format(i + 15)] = donanimlar_adet[i] * (ic+dis)
                 else:
                     ws['E{}'.format(i + 15)] = 0
 
