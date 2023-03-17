@@ -205,7 +205,7 @@ def show_page(nclicks,user,passw):
                     html.Hr(),
 
                 #dbc.Container([
-                    html.Div(dbc.Tabs(
+                    dbc.Container(dbc.Tabs(
                     [
                         dbc.Tab(offer_page(), label="Teklif Oluşturma Sayfası", tab_id='teklif', activeTabClassName="fw-bold fst-italic", tab_style={"margin": "auto"}, active_label_style={'backgroundColor':'transparent'}),
                         dbc.Tab(resources_page(), label="Fiyat & Paket Güncelleme Sayfası", tab_id='kaynak', activeTabClassName="fw-bold fst-italic", tab_style={"margin": "auto"}, active_label_style={'backgroundColor':'transparent'}),
@@ -215,7 +215,15 @@ def show_page(nclicks,user,passw):
     ) , {}
         
         else:
-            raise PreventUpdate
+            return (
+                login_page,
+                dbc.Row(
+                    dbc.Col(
+                        dbc.Label('Hatalı kullanıcı adı / şifre girdiniz. Lütfen tekrar deneyin.')
+                    )
+                )
+            )
+            # raise PreventUpdate
 
 
 
@@ -545,6 +553,15 @@ def write_to_excel(nclicks, proje, musteri, teklif, ic, dis, kategori, paket, ga
                      monofaz_ic, pulse_ic, ups_ic]
     ek_donanim_dis = [gateway_dis, trifaz_dis, akim_dis, sicaklik_dis, su_dis, klima_dis, modbus_dis, guc_dis,
                       jenerator_dis, monofaz_dis, pulse_dis, ups_dis]
+    
+    ek_donanim_ic_no_trifaz = filter( lambda num: num is not None, ([ek_donanim_ic[0]] + ek_donanim_ic[2:]) )
+    ek_donanim_dis_no_trifaz = filter( lambda num: num is not None, ([ek_donanim_dis[0]] + ek_donanim_dis[2:]) )
+
+    print(ek_donanim_ic_no_trifaz)
+    print(ek_donanim_dis_no_trifaz)
+
+    ek_donanim_ic_no_trifaz_toplam = sum(ek_donanim_ic_no_trifaz)
+    ek_donanim_dis_no_trifaz_toplam = sum(ek_donanim_dis_no_trifaz)
 
     ek_donanim_ic_toplam, ek_donanim_dis_toplam = 0, 0
 
@@ -637,20 +654,22 @@ def write_to_excel(nclicks, proje, musteri, teklif, ic, dis, kategori, paket, ga
         ws['G33'] = df_fiyat.loc[df_fiyat['Adaptör'] == 'Paket Kurulum (Şehir içi)']['Iskontosuz Fiyat'].values[0] * (1 - df_fiyat.loc[df_fiyat['Adaptör'] == 'Paket Kurulum (Şehir içi)']['Iskonto'].values[0])
         ws['E33'] = ic
         ws['F33'] = df_fiyat.loc[df_fiyat['Adaptör'] == 'Paket Kurulum (Şehir içi)']['Para Birimi'].values[0]
-#         ws['B35'] = 'Cihaz Başı Kurulum (Şehir içi)'
-#         ws['G35'] = df_fiyat.loc[df_fiyat['Adaptör'] == 'Cihaz Başı Kurulum (Şehir içi)']['Iskontosuz Fiyat'].values[0] * (1 - df_fiyat.loc[df_fiyat['Adaptör'] == 'Cihaz Başı Kurulum (Şehir içi)']['Iskonto'].values[0])
-#         ws['E35'] = "={}+(SUM(E17:E26)*{})".format(ek_donanim_ic_toplam, ic)
-#         ws['F35'] = df_fiyat.loc[df_fiyat['Adaptör'] == 'Cihaz Başı Kurulum (Şehir içi)']['Para Birimi'].values[0]
+        ws['B35'] = 'Cihaz Başı Kurulum (Şehir içi)'
+        ws['G35'] = df_fiyat.loc[df_fiyat['Adaptör'] == 'Cihaz Başı Kurulum (Şehir içi)']['Iskontosuz Fiyat'].values[0] * (1 - df_fiyat.loc[df_fiyat['Adaptör'] == 'Cihaz Başı Kurulum (Şehir içi)']['Iskonto'].values[0])
+        # ws['E35'] = "={}+(SUM(E17:E26)*{})".format(ek_donanim_ic_toplam, ic)
+        ws['E35'] = ek_donanim_ic_no_trifaz_toplam
+        ws['F35'] = df_fiyat.loc[df_fiyat['Adaptör'] == 'Cihaz Başı Kurulum (Şehir içi)']['Para Birimi'].values[0]
 
     if dis is not None or dis != 0:
         ws['B34'] = 'Paket Kurulum (Şehir Dışı)'
         ws['G34'] = df_fiyat.loc[df_fiyat['Adaptör'] == 'Paket Kurulum (Şehir dışı)']['Iskontosuz Fiyat'].values[0] * (1 - df_fiyat.loc[df_fiyat['Adaptör'] == 'Paket Kurulum (Şehir dışı)']['Iskonto'].values[0])
         ws['E34'] = dis
         ws['F34'] = df_fiyat.loc[df_fiyat['Adaptör'] == 'Paket Kurulum (Şehir dışı)']['Para Birimi'].values[0]
-#         ws['B36'] = 'Cihaz Başı Kurulum (Şehir dışı)'
-#         ws['G36'] = df_fiyat.loc[df_fiyat['Adaptör'] == 'Cihaz Başı Kurulum (Şehir dışı)']['Iskontosuz Fiyat'].values[0] * (1 - df_fiyat.loc[df_fiyat['Adaptör'] == 'Cihaz Başı Kurulum (Şehir dışı)']['Iskonto'].values[0])
-#         ws['E36'] = "={}+(SUM(E17:E26)*{})".format(ek_donanim_dis_toplam, dis)
-#         ws['F36'] = df_fiyat.loc[df_fiyat['Adaptör'] == 'Cihaz Başı Kurulum (Şehir dışı)']['Para Birimi'].values[0]
+        ws['B36'] = 'Cihaz Başı Kurulum (Şehir dışı)'
+        ws['G36'] = df_fiyat.loc[df_fiyat['Adaptör'] == 'Cihaz Başı Kurulum (Şehir dışı)']['Iskontosuz Fiyat'].values[0] * (1 - df_fiyat.loc[df_fiyat['Adaptör'] == 'Cihaz Başı Kurulum (Şehir dışı)']['Iskonto'].values[0])
+        # ws['E36'] = "={}+(SUM(E17:E26)*{})".format(ek_donanim_dis_toplam, dis)
+        ws['E36'] = ek_donanim_dis_no_trifaz_toplam
+        ws['F36'] = df_fiyat.loc[df_fiyat['Adaptör'] == 'Cihaz Başı Kurulum (Şehir dışı)']['Para Birimi'].values[0]
 
     ws['F33'].alignment = Alignment(horizontal='center')
     ws['F34'].alignment = Alignment(horizontal='center')
