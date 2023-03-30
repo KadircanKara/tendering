@@ -205,7 +205,7 @@ def show_page(nclicks,user,passw):
                     html.Hr(),
 
                 #dbc.Container([
-                    dbc.Container(dbc.Tabs(
+                    html.Div(dbc.Tabs(
                     [
                         dbc.Tab(offer_page(), label="Teklif Oluşturma Sayfası", tab_id='teklif', activeTabClassName="fw-bold fst-italic", tab_style={"margin": "auto"}, active_label_style={'backgroundColor':'transparent'}),
                         dbc.Tab(resources_page(), label="Fiyat & Paket Güncelleme Sayfası", tab_id='kaynak', activeTabClassName="fw-bold fst-italic", tab_style={"margin": "auto"}, active_label_style={'backgroundColor':'transparent'}),
@@ -760,6 +760,8 @@ def required_devices_border(kategori, paket, gateway, trifaz, akim, sicaklik, su
 
         if (kategori is not None and kategori != '-') and (paket is not None and paket != '-'):
 
+            df_packages = load_all_sources()[1]
+
             df = df_packages[kategori]
 
             df = df[[paket, '{} Cihaz'.format(paket)]]
@@ -795,4 +797,4 @@ def required_devices_border(kategori, paket, gateway, trifaz, akim, sicaklik, su
 
 
 if __name__ == "__main__":
-    app.run_server(debug=True)
+    app.run_server(debug=False)
