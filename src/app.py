@@ -298,7 +298,7 @@ def show_page(lang, nclicks_tr, nclicks_eng, user_tr, passw_tr, user_eng, passw_
                     dbc.Container([
                         dbc.Row([
                             dbc.Col(html.Img(src='/assets/faradai_logo_nobg.png', height="60px"), width=1),
-                            dbc.Col(html.H1('Faradai Tekliflendirme Modulü'), align='center', style={'color':'white'}, width=6),                            
+                            dbc.Col(html.H1(app.title), align='center', style={'color':'white'}, width=6),                            
                             ], align='center', justify='center', style={'align':'center','margin-top':'1rem'}
                         )
                     ]),
@@ -336,10 +336,7 @@ def show_page(lang, nclicks_tr, nclicks_eng, user_tr, passw_tr, user_eng, passw_
                     dbc.Container([
                         dbc.Row([
                             dbc.Col(html.Img(src='/assets/faradai_logo_nobg.png', height="60px"), width=1),
-                            dbc.Col(html.H1('Faradai Tekliflendirme Modulü'), align='center', style={'color':'white'}, width=6),
-
-                            dbc.Col()
-                            
+                            dbc.Col(html.H1(app.title), align='center', style={'color':'white'}, width=6),                            
                             ], align='center', justify='center', style={'align':'center','margin-top':'1rem'}
                         )
                     ]),
@@ -981,4 +978,4 @@ def required_devices_border(kategori, paket, gateway, trifaz, akim, sicaklik, su
 
 
 if __name__ == "__main__":
-    app.run_server(debug=False)
+    app.run_server(debug=True)
