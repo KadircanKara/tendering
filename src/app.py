@@ -17,9 +17,9 @@ app = dash.Dash(__name__, external_stylesheets=[dbc.themes.VAPOR], suppress_call
 
 server = app.server
 
-app.title = 'Faradai Tendering Process'
+app.title = 'Faradai Tekliflendirme Modulü'
 
-app.layout = login_page
+app.layout = login_page()
 
 
 @app.callback(
@@ -45,7 +45,6 @@ def reset_paket_table(nclicks_paket_reset, tab, isopen, color):
     Input('fiyat_reset_button','n_clicks'),
     Input('alert_fiyat','is_open'),
     State('alert_fiyat','color'),
-
 
 )
 
@@ -87,9 +86,10 @@ def update_fiyat(nclicks, data):
         book.save('Sources/FiyatListesi.xlsx')
         book.save('static/FiyatListesi.xlsx')
         # git_push()
-
-        return html.Div( "Fiyat Bilgileri Güncellendi"), True, dash.no_update
-
+        if app.title == 'Faradai Tekliflendirme Modulü':
+            return html.Div( "Fiyat Bilgileri Güncellendi"), True, dash.no_update
+        else :
+            return html.Div( "Price Information Updated"), True, dash.no_update
     else :
         raise PreventUpdate
 
@@ -126,8 +126,10 @@ def update_paket(nclicks, tab, data):
         book.save('Sources/Packages.xlsx')
         book.save('static/Packages.xlsx')
         # git_push()
-
-        return html.Div(tab + " Paketi Bilgileri Güncellendi"), True, dash.no_update,
+        if app.title == 'Faradai Tekliflendirme Modulü':
+            return html.Div(tab + " Paketi Bilgileri Güncellendi"), True, dash.no_update,
+        else :
+            return html.Div(tab + " Package Information Updated"), True, dash.no_update,
 
     else :
         raise PreventUpdate
@@ -149,7 +151,7 @@ def upload_msg(fiyat_contents):
     fiyat_color = ""
 
     if fiyat_contents :
-        fiyat_msg , fiyat_color = check_fiyat_upload(fiyat_contents)
+        fiyat_msg , fiyat_color = check_fiyat_upload(fiyat_contents, app.title)
         fiyat_isopen = True
 
     return fiyat_msg,fiyat_isopen,fiyat_color
@@ -173,7 +175,7 @@ def upload_msg(paket_contents):
     paket_color = ""
     
     if paket_contents :
-        paket_msg , paket_color = check_paket_upload(paket_contents)
+        paket_msg , paket_color = check_paket_upload(paket_contents, app.title)
         paket_isopen = True
 
     return paket_msg,paket_isopen,paket_color
@@ -183,48 +185,187 @@ def upload_msg(paket_contents):
 
     Output('main','children'),
     Output('main','style'),
-    Input('verify','n_clicks'),
-    State('user','value'),
-    State('passw','value'),
+    State('login_tabs','active_tab'),
+    Input('verify_tr','n_clicks'),
+    Input('verify_eng','n_clicks'),
+    State('user_tr','value'),
+    State('passw_tr','value'),
+    State('user_eng','value'),
+    State('passw_eng','value'),
+
 
 )
 
-def show_page(nclicks,user,passw):
-
-        if nclicks > 0 and user=='reengen' and passw=='rngn2021!':
-            
-            return (
-                dbc.Container([
-                    dbc.Row([
-                        dbc.Col(html.Img(src='/assets/faradai_logo_nobg.png', height="60px"), width=1),
-                        dbc.Col(html.H1('Faradai Tekliflendirme Modulü'), align='center', style={'color':'white'}, width=6)
-                        ], align='center', justify='center', style={'align':'center','margin-top':'1rem'}
-                    )
-                ]),
-
-                    html.Hr(),
-
-                #dbc.Container([
-                    html.Div(dbc.Tabs(
-                    [
-                        dbc.Tab(offer_page(), label="Teklif Oluşturma Sayfası", tab_id='teklif', activeTabClassName="fw-bold fst-italic", tab_style={"margin": "auto"}, active_label_style={'backgroundColor':'transparent'}),
-                        dbc.Tab(resources_page(), label="Fiyat & Paket Güncelleme Sayfası", tab_id='kaynak', activeTabClassName="fw-bold fst-italic", tab_style={"margin": "auto"}, active_label_style={'backgroundColor':'transparent'}),
-                    ], id='page_content', active_tab='teklif', style={'width':'100%','margin':'auto'}
-                ), style={'margin':'auto'})
-            #])
-    ) , {}
+def show_page(lang, nclicks_tr, nclicks_eng, user_tr, passw_tr, user_eng, passw_eng):
         
-        else:
-            return (
-                login_page,
-                dbc.Row(
-                    dbc.Col(
-                        dbc.Label('Hatalı kullanıcı adı / şifre girdiniz. Lütfen tekrar deneyin.')
+        print(f"lang: {lang}, nclicks_tr: {nclicks_tr}, nclicks_eng: {nclicks_eng}, user_tr: {user_tr}, passw_tr: {passw_tr}, user_eng: {user_eng}, passw_eng: {passw_eng}")
+
+        # if lang == 'tr':
+
+        #     if nclicks_tr > 0 :
+
+        #         if user_tr=='reengen' and passw_tr=='rngn2021!':
+
+        #             return (
+        #                 dbc.Container([
+        #                     dbc.Row([
+        #                         dbc.Col(html.Img(src='/assets/faradai_logo_nobg.png', height="60px"), width=1),
+        #                         dbc.Col(html.H1('Faradai Tekliflendirme Modulü'), align='center', style={'color':'white'}, width=6),
+
+        #                         dbc.Col()
+                                
+        #                         ], align='center', justify='center', style={'align':'center','margin-top':'1rem'}
+        #                     )
+        #                 ]),
+
+        #                     html.Hr(),
+
+        #                 #dbc.Container([
+        #                     html.Div(dbc.Tabs(
+        #                     [
+        #                         dbc.Tab(offer_page(lang='tr'), label="Teklif Oluşturma Sayfası", tab_id='teklif', activeTabClassName="fw-bold fst-italic", tab_style={"margin": "auto"}, active_label_style={'backgroundColor':'transparent'}),
+        #                         dbc.Tab(resources_page(lang='tr'), label="Fiyat & Paket Güncelleme Sayfası", tab_id='kaynak', activeTabClassName="fw-bold fst-italic", tab_style={"margin": "auto"}, active_label_style={'backgroundColor':'transparent'}),
+        #                     ], id='page_content', active_tab='teklif', style={'width':'100%','margin':'auto'}
+        #                 ), style={'margin':'auto'})
+        #             #])
+        #     ) , {}
+            
+        #         else :
+
+        #             return (
+        #                 login_page(),
+        #                 dbc.Row(
+        #                     dbc.Col(
+        #                         dbc.Label('Hatalı kullanıcı adı / şifre girdiniz. Lütfen tekrar deneyin.')
+        #                     )
+        #                 )
+        #             )
+                
+        # else :
+
+        #     if nclicks_eng > 0 :
+
+        #         if user_eng=='reengen' and passw_eng=='rngn2021!':
+
+        #             return ([
+        #                 dbc.Container([
+        #                     dbc.Row([
+        #                         dbc.Col(html.Img(src='/assets/faradai_logo_nobg.png', height="60px"), width=1),
+        #                         dbc.Col(html.H1('Faradai Tendering Process'), align='center', style={'color':'white'}, width=6),
+
+        #                         dbc.Col()
+                                
+        #                         ], align='center', justify='center', style={'align':'center','margin-top':'1rem'}
+        #                     )
+        #                 ]),
+
+        #                     html.Hr(),
+
+        #                 #dbc.Container([
+        #                     html.Div(dbc.Tabs(
+        #                     [
+        #                         dbc.Tab(offer_page(lang='eng'), label="Offer Generation Page", tab_id='teklif', activeTabClassName="fw-bold fst-italic", tab_style={"margin": "auto"}, active_label_style={'backgroundColor':'transparent'}),
+        #                         dbc.Tab(resources_page(lang='eng'), label="Price & Package Table Update Page", tab_id='kaynak', activeTabClassName="fw-bold fst-italic", tab_style={"margin": "auto"}, active_label_style={'backgroundColor':'transparent'}),
+        #                     ], id='page_content', active_tab='teklif', style={'width':'100%','margin':'auto'}
+        #                 ), style={'margin':'auto'})
+        #             #])
+        #     ], {})
+            
+        #         else :
+
+        #             return ([
+        #                 login_page(),
+        #                 dbc.Row(
+        #                     dbc.Col(
+        #                         dbc.Label('Incorrect username/password. Please try again.')
+        #                     )
+        #                 )
+        #             ], {}
+        #                 )
+
+
+        
+        if lang == 'tr':
+
+            if nclicks_tr > 0 and user_tr=='reengen' and passw_tr=='rngn2021!':
+
+                app.title = 'Faradai Tekliflendirme Modulü'
+                
+                return (
+
+                    print("TR"),
+
+                    dbc.Container([
+                        dbc.Row([
+                            dbc.Col(html.Img(src='/assets/faradai_logo_nobg.png', height="60px"), width=1),
+                            dbc.Col(html.H1('Faradai Tekliflendirme Modulü'), align='center', style={'color':'white'}, width=6),                            
+                            ], align='center', justify='center', style={'align':'center','margin-top':'1rem'}
+                        )
+                    ]),
+
+                        html.Hr(),
+
+                    #dbc.Container([
+                        html.Div(dbc.Tabs(
+                        [
+                            dbc.Tab(offer_page(lang='tr'), label="Teklif Oluşturma Sayfası", tab_id='teklif', activeTabClassName="fw-bold fst-italic", tab_style={"margin": "auto"}, active_label_style={'backgroundColor':'transparent'}),
+                            dbc.Tab(resources_page(lang='tr'), label="Fiyat & Paket Güncelleme Sayfası", tab_id='kaynak', activeTabClassName="fw-bold fst-italic", tab_style={"margin": "auto"}, active_label_style={'backgroundColor':'transparent'}),
+                        ], id='page_content', active_tab='teklif', style={'width':'100%','margin':'auto'}
+                    ), style={'margin':'auto'})
+                #])
+        ) , {}
+            
+            else:
+                return (
+                    login_page(),
+                    dbc.Row(
+                        dbc.Col(
+                            dbc.Label('Hatalı kullanıcı adı / şifre girdiniz. Lütfen tekrar deneyin.')
+                        )
                     )
                 )
-            )
-            # raise PreventUpdate
+                # raise PreventUpdate
 
+        else :
+
+            if nclicks_eng > 0 and user_eng=='reengen' and passw_eng=='rngn2021!':
+
+                app.title = 'Faradai Tendering Module'
+                
+                return (
+                    dbc.Container([
+                        dbc.Row([
+                            dbc.Col(html.Img(src='/assets/faradai_logo_nobg.png', height="60px"), width=1),
+                            dbc.Col(html.H1('Faradai Tekliflendirme Modulü'), align='center', style={'color':'white'}, width=6),
+
+                            dbc.Col()
+                            
+                            ], align='center', justify='center', style={'align':'center','margin-top':'1rem'}
+                        )
+                    ]),
+
+                        html.Hr(),
+
+                    #dbc.Container([
+                        html.Div(dbc.Tabs(
+                        [
+                            dbc.Tab(offer_page(lang='eng'), label="Offer Generation Page", tab_id='teklif', activeTabClassName="fw-bold fst-italic", tab_style={"margin": "auto"}, active_label_style={'backgroundColor':'transparent'}),
+                            dbc.Tab(resources_page(lang='eng'), label="Price & Package Update Page", tab_id='kaynak', activeTabClassName="fw-bold fst-italic", tab_style={"margin": "auto"}, active_label_style={'backgroundColor':'transparent'}),
+                        ], id='page_content', active_tab='teklif', style={'width':'100%','margin':'auto'}
+                    ), style={'margin':'auto'})
+                #])
+        ) , {}
+            
+            else:
+                return (
+                    login_page(),
+                    dbc.Row(
+                        dbc.Col(
+                            dbc.Label('Incorrect username/password. Please try again.')
+                        )
+                    )
+                )
+                # raise PreventUpdate
 
 
 @app.callback(
@@ -232,31 +373,67 @@ def show_page(nclicks,user,passw):
     Output("display-selected-package", "children"),
     Input("paket", "value"),
     Input("kategori", "value"),
+    State("main","children"),
 
     prevent_initial_call=True,
 )
-def func(paket, kat):
 
-    if paket is not None and paket != '-' and kat is not None and kat != '-':
+def func(paket, kat, page_content):
 
-        df = df_packages[kat]
+    # print("-->", lang)
 
-        df = df[[paket, '{} Cihaz'.format(paket)]]
-        df.dropna(inplace=True)
-        df.reset_index(inplace=True)
 
-        df.dropna(inplace=True)
+    # if page_content == offer_page(lang='tr'):
+    if app.title == 'Faradai Tekliflendirme Modulü':
 
-        contents = '{} - {}  : '.format(kat, paket)
+        if paket is not None and paket != '-' and kat is not None and kat != '-':
 
-        for index, row in df.iterrows():
-            contents = contents + '({}) {} '.format(str(int(row[paket])), row['{} Cihaz'.format(paket)])
+            df = df_packages[kat]
 
-        contents = contents[:-1] + ''
+            df = df[[paket, '{} Cihaz'.format(paket)]]
+            df.dropna(inplace=True)
+            df.reset_index(inplace=True)
 
-        return {'display': 'block'}, contents
-    else:
-        return None, 'Lütfen kategori-paket seçimi yapınız.'
+            df.dropna(inplace=True)
+
+            contents = '{} - {}  : '.format(kat, paket)
+
+            for index, row in df.iterrows():
+                contents = contents + '({}) {} '.format(str(int(row[paket])), row['{} Cihaz'.format(paket)])
+
+            contents = contents[:-1] + ''
+
+            # print("TR Page Contents:", contents)
+
+            return {'display': 'block'}, contents
+        else:
+            return None, 'Lütfen kategori-paket seçimi yapınız.'
+        
+    else :
+
+        if paket is not None and paket != '-' and kat is not None and kat != '-':
+
+            df = df_packages[kat]
+
+            df = df[[paket, '{} Cihaz'.format(paket)]]
+            df.dropna(inplace=True)
+            df.reset_index(inplace=True)
+
+            df.dropna(inplace=True)
+
+            contents = '{} - {}  : '.format(kat, paket)
+
+            for index, row in df.iterrows():
+                contents = contents + '({}) {} '.format(str(int(row[paket])), device_group_names_tr_to_eng[row['{} Cihaz'.format(paket)]])
+
+            contents = contents[:-1] + ''
+
+            # print("ENG Page Contents:", contents)
+
+            return {'display': 'block'}, contents
+        else:
+            return None, 'Please select a category-package combination in order to view default device list.'
+
 
 
 def cihaz_options(device, type):
@@ -737,13 +914,15 @@ def write_to_excel(nclicks, proje, musteri, teklif, ic, dis, kategori, paket, ga
     Input('Pulse Okuyucu', 'value'),
     Input('UPS', 'value'),
 
-    Input('page_content','active_tab'),
+    # Input('page_content','active_tab'),
+    State('main', 'children'),
 
     prevent_initial_call=False
 
 )
 def required_devices_border(kategori, paket, gateway, trifaz, akim, sicaklik, su, klima, modbus, guc, jenerator,
                             monofaz, pulse, ups, page_tab):
+    
 
     all_inputs = [gateway, trifaz, akim, sicaklik, su, klima, modbus, guc, jenerator, monofaz, pulse, ups]
 
@@ -753,7 +932,8 @@ def required_devices_border(kategori, paket, gateway, trifaz, akim, sicaklik, su
     DISABLED = [True] * len(all_inputs)
     VALUE = all_inputs
 
-    if page_tab == 'kaynak':
+    # if page_tab == 'kaynak':
+    if page_tab == resources_page(lang='tr') or page_tab == resources_page(lang='eng'):
         return [dash.no_update]*len(all_inputs) + [None]*(2*len(all_inputs))
     
     else :
@@ -774,10 +954,14 @@ def required_devices_border(kategori, paket, gateway, trifaz, akim, sicaklik, su
                             'Modbus Converter',
                             'Güç Kaynağı', 'Jeneratör Kartı', 'Monofaz Analizör', 'Pulse Okuyucu', 'UPS']
             
+            # tum_cihazlar = [device_group_names_tr_to_eng[a] for a in tum_cihazlar]
+            
             if kategori == '-' or paket == '-':
                 gereken_cihazlar = tum_cihazlar
             else:
                 gereken_cihazlar = df.loc[df['{} Cihaz'.format(paket)] != "Kurulum"]['{} Cihaz'.format(paket)].unique().tolist()
+
+            # print('-->', gereken_cihazlar)
 
             girilen_cihazlar = [gateway, trifaz, akim, sicaklik, su, klima, modbus, guc, jenerator, monofaz, pulse, ups]
 
