@@ -113,7 +113,7 @@ def every_first_letter_uppercase(string):
 
     return string
 
-def check_fiyat_upload(contents):
+def check_fiyat_upload(contents, title):
 
     content_type, content_string = contents.split(',')
     decoded = base64.b64decode(content_string)
@@ -124,7 +124,10 @@ def check_fiyat_upload(contents):
 
     color = 'success'
 
-    success_msg = 'Fiyat Dosyası Yüklendi'
+    if title == 'Faradai Tekliflendirme Modulü':
+        success_msg = 'Fiyat Dosyası Yüklendi'
+    else :
+        success_msg = 'Price File Uploaded'
 
     df_fiyat = pd.read_excel(io.BytesIO(decoded) , sheet_name=sheets[0])
 
@@ -154,7 +157,10 @@ def check_fiyat_upload(contents):
         for i in range(len(faulty_headers)):
             msg += '"' + every_first_letter_uppercase(faulty_headers[i]) + '"' + ' '
         msg = msg[0:-1] + '. '
-        return 'Bazı sütun(lar) bulunamadı : ' + msg , 'danger'
+        if title == 'Faradai Tekliflendirme Modulü':
+            return 'Bazı sütun(lar) bulunamadı : ' + msg , 'danger'
+        else :
+            return 'Some column(s) not found : ' + msg , 'danger'
 
     else:
 
@@ -182,19 +188,28 @@ def check_fiyat_upload(contents):
 
         
         if wrong_data :
-            msg += 'Bazı sütun(lar)da yanlış veri tipi tespit edilmiştir : '
+            if title == 'Faradai Tekliflendirme Modulü':
+                msg += 'Bazı sütun(lar)da yanlış veri tipi tespit edilmiştir : '
+            else :
+                msg += 'Incorrect data type found on some column(s) : '
             for header in wrong_data :
                 msg += f'"{header}" , '
             msg = msg[0:-3] + '.'
         
         elif wrong_rate_flag :
-            msg += '"Para Birimi" sütununda yanlış para birim(leri) tespit edilmiştir : '
+            if title == 'Faradai Tekliflendirme Modulü':
+                msg += '"Para Birimi" sütununda yanlış para birim(leri) tespit edilmiştir : '
+            else :
+                msg += 'Incorrect currency or currencies found under "Currency" column : '
             for rate in list(set(wrong_rate)) :
                 msg += f'"{rate}" , '
             msg = msg[0:-3] + '.'
 
         if wrong_number:
-            msg += 'Bazı fiyat sütun(lar)ında yanlış veri tipi tespit edilmiştir : '
+            if title == 'Faradai Tekliflendirme Modulü':
+                msg += 'Bazı fiyat sütun(lar)ında yanlış veri tipi tespit edilmiştir : '
+            else :
+                msg += 'Incorrect data type found under price column : '
             for header in wrong_number :
                 msg += f'"{header}" , '
             msg = msg[0:-3] + '.'
@@ -215,7 +230,7 @@ def check_fiyat_upload(contents):
             color = 'success'
             return success_msg , color
 
-def check_paket_upload(contents):
+def check_paket_upload(contents, title):
 
     content_type, content_string = contents.split(',')
     decoded = base64.b64decode(content_string)
@@ -225,9 +240,10 @@ def check_paket_upload(contents):
     if len(sheets) >= len(packages) :
 
         color = 'success'
-
-        success_msg = 'Paket Dosyası Yüklendi'
-
+        if title == 'Faradai Tekliflendirme Modulü':
+            success_msg = 'Paket Dosyası Yüklendi'
+        else :
+            success_msg = 'Package File Uploaded'
         missing_sheets = []
 
         for i in packages:
@@ -252,7 +268,10 @@ def check_paket_upload(contents):
         wrong_data = []
         wrong_number = []
 
-        msg = 'Paket Dosyası Yüklendi'
+        if title == 'Faradai Tekliflendirme Modulü':
+            msg = 'Paket Dosyası Yüklendi'
+        else :
+            msg = 'Package File Uploaded'
         color = 'success'
         error_msgs = []
 
@@ -306,9 +325,15 @@ def check_paket_upload(contents):
             for i in wrong_number :
                 msg += i + ', '
             if len(wrong_number) > 1 :
-                msg += "paketlerinde hatalı cihaz sayı(lar)ı tespit edildi (0 veya 0'dan küçük). Lütfen kontrol ediniz."
+                if title == 'Faradai Tekliflendirme Modulü':
+                    msg += "paketlerinde hatalı cihaz sayı(lar)ı tespit edildi (0 veya 0'dan küçük). Lütfen kontrol ediniz."
+                else :
+                    msg += "packages include some incorrect device number(s) (0 or less than 0). Please check."
             else :
-                msg += "paketinde hatalı cihaz sayı(lar)ı tespit edildi (0 veya 0'dan küçük). Lütfen kontrol ediniz."
+                if title == 'Faradai Tekliflendirme Modulü':
+                    msg += "paketinde hatalı cihaz sayı(lar)ı tespit edildi (0 veya 0'dan küçük). Lütfen kontrol ediniz."
+                else :
+                    msg += "package includes some incorrect device number(s) (0 or less than 0). Please check."
 
 
         elif wrong_data:
@@ -319,9 +344,15 @@ def check_paket_upload(contents):
             for i in wrong_data :
                 msg += i + ', '
             if len(wrong_data) > 1 :
-                msg += 'paketlerinde hatalı veri tip(ler)i tespit edildi. Lütfen kontrol ediniz.'
+                if title == 'Faradai Tekliflendirme Modulü':
+                    msg += 'paketlerinde hatalı veri tip(ler)i tespit edildi. Lütfen kontrol ediniz.'
+                else :
+                    msg += 'packages include some incorrect data type(s). Please check.'
             else :
-                msg += 'paketinde hatalı veri tip(ler)i tespit edildi. Lütfen kontrol ediniz.'
+                if title == 'Faradai Tekliflendirme Modulü':
+                    msg += 'paketinde hatalı veri tip(ler)i tespit edildi. Lütfen kontrol ediniz.'
+                else :
+                    msg += 'package includes some incorrect data type(s). Please check.'
 
 
         elif faulty_headers :
@@ -332,9 +363,15 @@ def check_paket_upload(contents):
             for i in faulty_headers :
                 msg += i + ', '
             if len(faulty_headers) > 1 :
-                msg += 'paketlerinin başlıkları hatalı. Lütfen kontrol ediniz.'
+                if title == 'Faradai Tekliflendirme Modulü':
+                    msg += 'paketlerinin başlıkları hatalı. Lütfen kontrol ediniz.'
+                else :
+                    msg += 'packages have incorrect headers. Please check.'
             else :
-                msg += 'paketinin başlıkları hatalı. Lütfen kontrol ediniz.'
+                if title == 'Faradai Tekliflendirme Modulü':
+                    msg += 'paketinin başlıkları hatalı. Lütfen kontrol ediniz.'
+                else :
+                    msg += 'package has incorrect headers. Please check.'
 
         
         else :
@@ -345,47 +382,99 @@ def check_paket_upload(contents):
         return msg,color
 
     else :
+        if title == 'Faradai Tekliflendirme Modulü':
+            return 'Yüklediğiniz exceldeki sayfa sayısı hatalı. Lütfen kontrol ediniz.', 'danger'
+        else :
+            return 'Uploaded excel file has an incorrect number of sheets. Please check.', 'danger'
 
-        return 'Yüklediğiniz exceldeki sayfa sayısı hatalı. Lütfen kontrol ediniz.', 'danger'
 
-def cihaz_row(cihaz):
-    return (
+def cihaz_row(cihaz, lang):
 
-        html.Div(children=[
+    if lang != 'tr':
+        cihaz_tr = device_group_names_eng_to_tr[cihaz]
 
-            dbc.Row(children=[
-        
-                dbc.Col(
-                    html.Label(cihaz, style=input_style), align='center', width=2
-                ),
+    if lang == 'tr':
 
-                dbc.Col(
-                    dbc.Select(id=cihaz, placeholder="", disabled=True), align='center', width=2
-                ),
+        return (
 
-                dbc.Col(
-                    dbc.Input(id='{}_num'.format(cihaz), type='number', placeholder='Adet', min=0, step=1, style=small_input_style), align='center', width=1
-                ),
+            html.Div(children=[
 
-                dbc.Col(
-                    html.Label("Ek {}".format(cihaz), style=input_style), align='center', width={'size':2,'offset':1}
-                ),
+                dbc.Row(children=[
+            
+                    dbc.Col(
+                        html.Label(cihaz, style=input_style), align='center', width=2
+                    ),
 
-                dbc.Col(
-                    dbc.Select(id='ek_{}'.format(cihaz), placeholder=""), align='center', width=2
-                ),
+                    dbc.Col(
+                        dbc.Select(id=cihaz, placeholder="", disabled=True), align='center', width=2
+                    ),
 
-                dbc.Col(
-                    dbc.Input(id='ek_{}_ic'.format(cihaz), type='number', placeholder='İç', min=0, step=1 , style=small_input_style), align='center', width=1
-                ),
+                    dbc.Col(
+                        dbc.Input(id='{}_num'.format(cihaz), type='number', placeholder='#', min=0, step=1, style=small_input_style), align='center', width=1
+                    ),
 
-                dbc.Col(
-                    dbc.Input(id='ek_{}_dis'.format(cihaz), type='number', placeholder='Dış', min=0, step=1 , style=small_input_style), align='center', width=1
-                ),
-        
-            ]),
+                    dbc.Col(
+                        html.Label("Ek {}".format(cihaz), style=input_style), align='center', width={'size':2,'offset':1}
+                    ),
 
-            html.Br(),
+                    dbc.Col(
+                        dbc.Select(id='ek_{}'.format(cihaz), placeholder=""), align='center', width=2
+                    ),
 
-        ])
-    )
+                    dbc.Col(
+                        dbc.Input(id='ek_{}_ic'.format(cihaz), type='number', placeholder='İç', min=0, step=1 , style=small_input_style), align='center', width=1
+                    ),
+
+                    dbc.Col(
+                        dbc.Input(id='ek_{}_dis'.format(cihaz), type='number', placeholder='Dış', min=0, step=1 , style=small_input_style), align='center', width=1
+                    ),
+            
+                ]),
+
+                html.Br(),
+
+            ])
+        )
+    
+    else :
+
+        return (
+
+            html.Div(children=[
+
+                dbc.Row(children=[
+            
+                    dbc.Col(
+                        html.Label(cihaz, style=input_style), align='center', width=2
+                    ),
+
+                    dbc.Col(
+                        dbc.Select(id= cihaz_tr, placeholder="", disabled=True), align='center', width=2
+                    ),
+
+                    dbc.Col(
+                        dbc.Input(id='{}_num'.format(cihaz_tr), type='number', placeholder='#', min=0, step=1, style=small_input_style), align='center', width=1
+                    ),
+
+                    dbc.Col(
+                        html.Label("Extra {}".format(cihaz), style=input_style), align='center', width={'size':2,'offset':1}
+                    ),
+
+                    dbc.Col(
+                        dbc.Select(id='ek_{}'.format(cihaz_tr), placeholder=""), align='center', width=2
+                    ),
+
+                    dbc.Col(
+                        dbc.Input(id='ek_{}_ic'.format(cihaz_tr), type='number', placeholder='Inter', min=0, step=1 , style=small_input_style), align='center', width=1
+                    ),
+
+                    dbc.Col(
+                        dbc.Input(id='ek_{}_dis'.format(cihaz_tr), type='number', placeholder='Intra', min=0, step=1 , style=small_input_style), align='center', width=1
+                    ),
+            
+                ]),
+
+                html.Br(),
+
+            ])
+        )
