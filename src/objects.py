@@ -9,9 +9,40 @@ select_style={'background-color':'transparent','border-color':'red'}
 
 packages = ['Access', 'Starter', 'Standard', 'Full-stack']
 
-myButton = dbc.Button("Teklif Oluştur", id="submit", n_clicks=0, color='secondary', outline=True, disabled=True, style={'width':'100%'})
+device_group_names_tr_to_eng = {
 
-submit_button = dbc.Button("Login", id="verify", n_clicks=0, outline=True , color='secondary', className="me-1", style={'width':'15%'})
+    'Gateway':'Gateway',
+    'Trifaz Analizör':'Three-Phase Analyzer',
+    'Trifaz':'Three-Phase Analyzer',
+    'Akım Trafosu':'Current Transformer',
+    'Sıcaklık Sensörü':'Heat Sensor',
+    'Su Sayacı':'Water Meter',
+    'Akıllı Klima Kontrol':'Smart AC Control Unit',
+    'Modbus Converter':'Modbus Converter',
+    'Güç Kaynağı':'Power Source',
+    'Jeneratör Kartı':'Generator Board',
+    'Monofaz Analizör':'Monophase Analyzer',
+    'Pulse Okuyucu':'Pulse Reader',
+    'UPS':'UPS',
+    'Kurulum':'Setup'
+
+}
+
+device_group_names_eng_to_tr = {v: k for k, v in device_group_names_tr_to_eng.items()}
+device_group_names_eng_to_tr['Three-Phase Analyzer'] = 'Trifaz Analizör'
+
+def myButton(lang):
+    
+    if lang == 'tr' :
+        return dbc.Button("Teklif Oluştur", id="submit", n_clicks=0, color='secondary', outline=True, disabled=True, style={'width':'100%'})
+    else :
+        return dbc.Button("Generate Offer", id="submit", n_clicks=0, color='secondary', outline=True, disabled=True, style={'width':'100%'})
+    
+            
+
+submit_button_tr = dbc.Button("Giriş", id="verify_tr", n_clicks=0, outline=True , color='secondary', className="me-1", style={'width':'15%'})
+submit_button_eng = dbc.Button("Login", id="verify_eng", n_clicks=0, outline=True , color='secondary', className="me-1", style={'width':'15%'})
+
 
 old_submit_button = dbc.Button("Giriş", id="verify", n_clicks=0,
                             style={'border-width': '0.625rem', 'font-size': '0.875rem', 'background-color': "#D6EAF8",
