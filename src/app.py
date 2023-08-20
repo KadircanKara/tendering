@@ -22,6 +22,17 @@ app.title = 'Faradai Tekliflendirme Modulü'
 app.layout = login_page()
 
 
+# @app.callback(
+        
+#     Output(),
+#     State('login_tabs','active_tab'),
+
+#     prevent_initial_call=True
+
+
+# )
+
+
 @app.callback(
 
     Output('paket_table','data'),
@@ -852,11 +863,14 @@ def write_to_excel(nclicks, proje, musteri, teklif, ic, dis, kategori, paket, ga
     name_of_file = musteri + " - " + proje
     wb.save('Outputs/' + name_of_file + '.xlsx')
 
-    return html.Div(name_of_file + " adlı dosyanız hazır.",style={'text-align':'center','height':'auto'}), True, True, 4000, dcc.send_file('Outputs/' + name_of_file + '.xlsx')
+    if app.title == 'Faradai Tekliflendirme Modulü':
+        return html.Div(name_of_file + " adlı dosyanız hazır.",style={'text-align':'center','height':'auto'}), True, True, 4000, dcc.send_file('Outputs/' + name_of_file + '.xlsx')
+    else :
+        return html.Div(name_of_file + " named file is ready.",style={'text-align':'center','height':'auto'}), True, True, 4000, dcc.send_file('Outputs/' + name_of_file + '.xlsx')
 
 
 @app.callback(
-
+        
     Output('Gateway', 'disabled'),
     Output('Trifaz Analizör', 'disabled'),
     Output('Akım Trafosu', 'disabled'),
@@ -883,99 +897,182 @@ def write_to_excel(nclicks, proje, musteri, teklif, ic, dis, kategori, paket, ga
     Output('Pulse Okuyucu', 'value'),
     Output('UPS', 'value'),
 
-    Output('ek_Gateway', 'value'),
-    Output('ek_Trifaz Analizör', 'value'),
-    Output('ek_Akım Trafosu', 'value'),
-    Output('ek_Sıcaklık Sensörü', 'value'),
-    Output('ek_Su Sayacı', 'value'),
-    Output('ek_Akıllı Klima Kontrol', 'value'),
-    Output('ek_Modbus Converter', 'value'),
-    Output('ek_Güç Kaynağı', 'value'),
-    Output('ek_Jeneratör Kartı', 'value'),
-    Output('ek_Monofaz Analizör', 'value'),
-    Output('ek_Pulse Okuyucu', 'value'),
-    Output('ek_UPS', 'value'),
 
     Input("kategori", "value"),
     Input("paket", "value"),
-    Input('Gateway', 'value'),
-    Input('Trifaz Analizör', 'value'),
-    Input('Akım Trafosu', 'value'),
-    Input('Sıcaklık Sensörü', 'value'),
-    Input('Su Sayacı', 'value'),
-    Input('Akıllı Klima Kontrol', 'value'),
-    Input('Modbus Converter', 'value'),
-    Input('Güç Kaynağı', 'value'),
-    Input('Jeneratör Kartı', 'value'),
-    Input('Monofaz Analizör', 'value'),
-    Input('Pulse Okuyucu', 'value'),
-    Input('UPS', 'value'),
-
-    # Input('page_content','active_tab'),
-    State('main', 'children'),
 
     prevent_initial_call=False
 
 )
-def required_devices_border(kategori, paket, gateway, trifaz, akim, sicaklik, su, klima, modbus, guc, jenerator,
-                            monofaz, pulse, ups, page_tab):
-    
 
-    all_inputs = [gateway, trifaz, akim, sicaklik, su, klima, modbus, guc, jenerator, monofaz, pulse, ups]
+def enable_device_options(kategori, paket):
 
-    DISABLED = [True] * len(all_inputs)
-    VALUE = all_inputs
+    # all_inputs = [gateway, trifaz, akim, sicaklik, su, klima, modbus, guc, jenerator, monofaz, pulse, ups]
+    tum_cihazlar = ['Gateway', 'Trifaz', 'Akım Trafosu', 'Sıcaklık Sensörü', 'Su Sayacı', 'Akıllı Klima Kontrol',
+                    'Modbus Converter',
+                    'Güç Kaynağı', 'Jeneratör Kartı', 'Monofaz Analizör', 'Pulse Okuyucu', 'UPS']
 
-    DISABLED = [True] * len(all_inputs)
-    VALUE = all_inputs
+    DISABLED = [True] * len(tum_cihazlar)
 
-    # if page_tab == 'kaynak':
-    if page_tab == resources_page(lang='tr') or page_tab == resources_page(lang='eng'):
-        return [dash.no_update]*len(all_inputs) + [None]*(2*len(all_inputs))
+    if (kategori is not None and kategori != '-') and (paket is not None and paket != '-'):
+
+        df_packages = load_all_sources()[1]
+
+        df = df_packages[kategori]
+
+        df = df[[paket, '{} Cihaz'.format(paket)]]
+        df.dropna(inplace=True)
+        df.reset_index(drop=True)
+
+        df.dropna(inplace=True)
+        
+        # tum_cihazlar = [device_group_names_tr_to_eng[a] for a in tum_cihazlar]
+        
+        if kategori == '-' or paket == '-':
+            gereken_cihazlar = tum_cihazlar
+        else:
+            gereken_cihazlar = df.loc[df['{} Cihaz'.format(paket)] != "Kurulum"]['{} Cihaz'.format(paket)].unique().tolist()
+
+        print('-->', gereken_cihazlar)
+
+        device_type_option_state = []
+        device_type_value = []
+
+        for i in range(len(tum_cihazlar)):
+            if tum_cihazlar[i] in gereken_cihazlar:
+                device_type_option_state.append(False)
+                device_type_value.append(dash.no_update)
+            else :
+                device_type_option_state.append(True)
+                device_type_value.append(None)
+
+        return device_type_option_state + device_type_value
     
     else :
+        return [False]*len(tum_cihazlar) + [dash.no_update]*len(tum_cihazlar)
 
-        if (kategori is not None and kategori != '-') and (paket is not None and paket != '-'):
 
-            df_packages = load_all_sources()[1]
+# @app.callback(
 
-            df = df_packages[kategori]
+#     Output('Gateway', 'disabled'),
+#     Output('Trifaz Analizör', 'disabled'),
+#     Output('Akım Trafosu', 'disabled'),
+#     Output('Sıcaklık Sensörü', 'disabled'),
+#     Output('Su Sayacı', 'disabled'),
+#     Output('Akıllı Klima Kontrol', 'disabled'),
+#     Output('Modbus Converter', 'disabled'),
+#     Output('Güç Kaynağı', 'disabled'),
+#     Output('Jeneratör Kartı', 'disabled'),
+#     Output('Monofaz Analizör', 'disabled'),
+#     Output('Pulse Okuyucu', 'disabled'),
+#     Output('UPS', 'disabled'),
 
-            df = df[[paket, '{} Cihaz'.format(paket)]]
-            df.dropna(inplace=True)
-            df.reset_index(drop=True)
+#     Output('Gateway', 'value'),
+#     Output('Trifaz Analizör', 'value'),
+#     Output('Akım Trafosu', 'value'),
+#     Output('Sıcaklık Sensörü', 'value'),
+#     Output('Su Sayacı', 'value'),
+#     Output('Akıllı Klima Kontrol', 'value'),
+#     Output('Modbus Converter', 'value'),
+#     Output('Güç Kaynağı', 'value'),
+#     Output('Jeneratör Kartı', 'value'),
+#     Output('Monofaz Analizör', 'value'),
+#     Output('Pulse Okuyucu', 'value'),
+#     Output('UPS', 'value'),
 
-            df.dropna(inplace=True)
+#     Output('ek_Gateway', 'value'),
+#     Output('ek_Trifaz Analizör', 'value'),
+#     Output('ek_Akım Trafosu', 'value'),
+#     Output('ek_Sıcaklık Sensörü', 'value'),
+#     Output('ek_Su Sayacı', 'value'),
+#     Output('ek_Akıllı Klima Kontrol', 'value'),
+#     Output('ek_Modbus Converter', 'value'),
+#     Output('ek_Güç Kaynağı', 'value'),
+#     Output('ek_Jeneratör Kartı', 'value'),
+#     Output('ek_Monofaz Analizör', 'value'),
+#     Output('ek_Pulse Okuyucu', 'value'),
+#     Output('ek_UPS', 'value'),
 
-            tum_cihazlar = ['Gateway', 'Trifaz', 'Akım Trafosu', 'Sıcaklık Sensörü', 'Su Sayacı', 'Akıllı Klima Kontrol',
-                            'Modbus Converter',
-                            'Güç Kaynağı', 'Jeneratör Kartı', 'Monofaz Analizör', 'Pulse Okuyucu', 'UPS']
+#     Input("kategori", "value"),
+#     Input("paket", "value"),
+#     Input('Gateway', 'value'),
+#     Input('Trifaz Analizör', 'value'),
+#     Input('Akım Trafosu', 'value'),
+#     Input('Sıcaklık Sensörü', 'value'),
+#     Input('Su Sayacı', 'value'),
+#     Input('Akıllı Klima Kontrol', 'value'),
+#     Input('Modbus Converter', 'value'),
+#     Input('Güç Kaynağı', 'value'),
+#     Input('Jeneratör Kartı', 'value'),
+#     Input('Monofaz Analizör', 'value'),
+#     Input('Pulse Okuyucu', 'value'),
+#     Input('UPS', 'value'),
+
+#     # Input('page_content','active_tab'),
+#     State('main', 'children'),
+
+#     prevent_initial_call=False
+
+# )
+# def required_devices_border(kategori, paket, gateway, trifaz, akim, sicaklik, su, klima, modbus, guc, jenerator,
+#                             monofaz, pulse, ups, page_tab):
+    
+
+#     all_inputs = [gateway, trifaz, akim, sicaklik, su, klima, modbus, guc, jenerator, monofaz, pulse, ups]
+
+#     DISABLED = [True] * len(all_inputs)
+#     VALUE = all_inputs
+
+#     DISABLED = [True] * len(all_inputs)
+#     VALUE = all_inputs
+
+#     # if page_tab == 'kaynak':
+#     if page_tab == resources_page(lang='tr') or page_tab == resources_page(lang='eng'):
+#         return [dash.no_update]*len(all_inputs) + [None]*(2*len(all_inputs))
+    
+#     else :
+
+#         if (kategori is not None and kategori != '-') and (paket is not None and paket != '-'):
+
+#             df_packages = load_all_sources()[1]
+
+#             df = df_packages[kategori]
+
+#             df = df[[paket, '{} Cihaz'.format(paket)]]
+#             df.dropna(inplace=True)
+#             df.reset_index(drop=True)
+
+#             df.dropna(inplace=True)
+
+#             tum_cihazlar = ['Gateway', 'Trifaz', 'Akım Trafosu', 'Sıcaklık Sensörü', 'Su Sayacı', 'Akıllı Klima Kontrol',
+#                             'Modbus Converter',
+#                             'Güç Kaynağı', 'Jeneratör Kartı', 'Monofaz Analizör', 'Pulse Okuyucu', 'UPS']
             
-            # tum_cihazlar = [device_group_names_tr_to_eng[a] for a in tum_cihazlar]
+#             # tum_cihazlar = [device_group_names_tr_to_eng[a] for a in tum_cihazlar]
             
-            if kategori == '-' or paket == '-':
-                gereken_cihazlar = tum_cihazlar
-            else:
-                gereken_cihazlar = df.loc[df['{} Cihaz'.format(paket)] != "Kurulum"]['{} Cihaz'.format(paket)].unique().tolist()
+#             if kategori == '-' or paket == '-':
+#                 gereken_cihazlar = tum_cihazlar
+#             else:
+#                 gereken_cihazlar = df.loc[df['{} Cihaz'.format(paket)] != "Kurulum"]['{} Cihaz'.format(paket)].unique().tolist()
 
-            # print('-->', gereken_cihazlar)
+#             # print('-->', gereken_cihazlar)
 
-            girilen_cihazlar = [gateway, trifaz, akim, sicaklik, su, klima, modbus, guc, jenerator, monofaz, pulse, ups]
+#             girilen_cihazlar = [gateway, trifaz, akim, sicaklik, su, klima, modbus, guc, jenerator, monofaz, pulse, ups]
 
-            for i in range(len(tum_cihazlar)):
-                if tum_cihazlar[i] in gereken_cihazlar:
-                    DISABLED[i] = False
-                else:
-                    VALUE[i] = None
+#             for i in range(len(tum_cihazlar)):
+#                 if tum_cihazlar[i] in gereken_cihazlar:
+#                     DISABLED[i] = False
+#                 else:
+#                     VALUE[i] = None
 
-            return DISABLED + VALUE + [dash.no_update]*len(all_inputs)
+#             return DISABLED + VALUE + [dash.no_update]*len(all_inputs)
 
 
-        else:
+#         else:
 
-            DISABLED = [False] * len(all_inputs)
-            return DISABLED + VALUE + [dash.no_update]*len(all_inputs)
+#             DISABLED = [False] * len(all_inputs)
+#             return DISABLED + VALUE + [dash.no_update]*len(all_inputs)
 
 
 if __name__ == "__main__":
-    app.run_server(debug=True)
+    app.run_server(debug=False)
