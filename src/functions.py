@@ -406,7 +406,7 @@ def cihaz_row(cihaz, lang):
                     ),
 
                     dbc.Col(
-                        dbc.Select(id=cihaz, placeholder="", disabled=True), align='center', width=2
+                        dbc.Select(id=cihaz, placeholder="", disabled=False), align='center', width=2
                     ),
 
                     dbc.Col(
@@ -449,7 +449,7 @@ def cihaz_row(cihaz, lang):
                     ),
 
                     dbc.Col(
-                        dbc.Select(id= cihaz_tr, placeholder="", disabled=True), align='center', width=2
+                        dbc.Select(id= cihaz_tr, placeholder="", disabled=False), align='center', width=2
                     ),
 
                     dbc.Col(
